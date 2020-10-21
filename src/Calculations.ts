@@ -49,4 +49,4 @@ export const accuracy = (coordinates: Position[]) =>
   100 * (1 - sigmoid(0.5, 4, 1, averageDistance(coordinates, zeroPosition)));
 
 export const precision = (coordinates: Position[]) =>
-  100 * (1 - sigmoid(1, 4, 1, standardDeviation(coordinates, averagePoint(coordinates))));
+  100 * (1 - sigmoid(1.2, 4, 1, standardDeviation(coordinates, averagePoint(coordinates))));
