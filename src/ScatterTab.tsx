@@ -155,7 +155,7 @@ const ScatterTab = (props: {data: BurstData[], setData: React.Dispatch<React.Set
           <Grid item container spacing={5} xs={12} alignItems="center">
 
       <Grid item xs={1} style={{marginRight: -20}}>
-              <Fab color={showColors ? "secondary" : ""} aria-label="edit" onClick={() => switchColors()}>
+              <Fab color={showColors ? "secondary" : "default"} aria-label="edit" onClick={() => switchColors()}>
                   {showColors ?  <InvertColorsIcon/> : <InvertColorsOffIcon/>}
               </Fab>
             </Grid>
