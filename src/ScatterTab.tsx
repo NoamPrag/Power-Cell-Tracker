@@ -1,6 +1,6 @@
 import * as React from "react";
 import Burst, { BurstData, Position } from "./Burst";
-import { Grid, Typography, Box, Fab, Button } from "@material-ui/core";
+import { Grid, Typography, Fab, Button } from "@material-ui/core";
 import Scatter from "./Scatter";
 import { accuracy, precision } from "./Calculations";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
