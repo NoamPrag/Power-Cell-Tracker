@@ -12,14 +12,6 @@ import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 
 
 
-
-
-// import { data } from "./Arduino/GetData";
-
-// console.log(data);
-
-
-
 export let colors = [
   "#2196f3",
   "#2b7fde",
