@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import Burst, { BurstData, Position } from "./Burst";
 import { Grid, Typography, Fab, Button } from "@material-ui/core";
 import Scatter from "./Scatter";
@@ -42,7 +42,7 @@ export let colors = [
 // ];
 
 function useForceUpdate() {
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = useState(0);
   return () => setValue((value) => value + 1);
 }
 
@@ -68,7 +68,7 @@ const ScatterTab = (props: {data: BurstData[], setData: React.Dispatch<React.Set
   const totalPrecision = precision(allPositions);
   const totalAccuracy = accuracy(allPositions);
 
-  const [showColors, setShowColors] = React.useState(true);
+  const [showColors, setShowColors] = useState(true);
 
   React.useEffect(() => {
     // Shuffle the colors array
