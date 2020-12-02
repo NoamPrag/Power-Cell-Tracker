@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Burst, { BurstData, Position } from "./Burst";
 import { Grid, Typography, Fab, Button } from "@material-ui/core";
 import Scatter from "./Scatter";
@@ -24,7 +24,6 @@ export let colors = [
   "#fa6e1b",
   "#ff9800",
   "#414141",
-  "#ff9800",
   "#c3a01b",
   "#88a735",
   "#4caf50",
@@ -55,7 +54,7 @@ const THEME = createMuiTheme({
 
 
 
-const ScatterTab = (props: {data: BurstData[], setData: React.Dispatch<React.SetStateAction<BurstData[]>>}) => {
+const ScatterTab = (props: {data: BurstData[], setData: (data: BurstData[]) => void}) => {
 
   
 
@@ -70,13 +69,13 @@ const ScatterTab = (props: {data: BurstData[], setData: React.Dispatch<React.Set
 
   const [showColors, setShowColors] = useState(true);
 
-  React.useEffect(() => {
-    // Shuffle the colors array
+  useEffect(() => {
+    // Shuffle the colors array (bubble shuffle)
     for (let i = 0; i < Math.pow(colors.length, 2); i++) {
       colors.sort((a, b) => Math.random() - 0.5);
     }
     
-    props.setData((curr) =>
+    props.setData(curr =>
       curr.map((item, index) => {
         let itemCopy = item;
         itemCopy.color = colors[index];
