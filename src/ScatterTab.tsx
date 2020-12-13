@@ -14,7 +14,6 @@ import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 
 export let colors = [
   "#2196f3",
-  "#2b7fde",
   "#3568ca",
   "#3f51b5",
   "#7c3696",
@@ -60,16 +59,11 @@ interface ScatterTabProps {
 
 const ScatterTab = (props: ScatterTabProps) => {
 
-  
 
-  let allPositions: Position[] = [];
-  for (const burst of props.data.map((val) => val.burstCoordinates)) {
-    for (const position of burst) {
-      allPositions.push(position);
-    }
-  }
-  const totalPrecision = precision(allPositions);
-  const totalAccuracy = accuracy(allPositions);
+  const allPositions: Position[] = props.data.reduce((acc: Position[], curr: BurstData): Position[] => [...acc, ...curr.burstCoordinates], []);
+
+  const totalPrecision: number = precision(allPositions);
+  const totalAccuracy: number = accuracy(allPositions);
 
   const [showColors, setShowColors] = useState(true);
 
@@ -90,6 +84,7 @@ const ScatterTab = (props: ScatterTabProps) => {
 
   const switchColors = () => {
     setShowColors((val) => !val);
+
     props.setData((curr: BurstData[]): BurstData[] =>
       curr.map((item: BurstData, index: number) => {
         let itemCopy: BurstData = item;

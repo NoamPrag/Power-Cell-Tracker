@@ -4,8 +4,8 @@ import MenuAppBar from "./NavBar";
 import { dataGenerator } from "./DataGenerator";
 import { BurstData } from "./Burst";
 
-export type Tab = "Scatter" | "Arduino" | "Stats";
 
+export type Tab = "Scatter" | "Arduino" | "Stats";
 
 // const SerialPort: any = require('serialport')
 // const Readline: any = require('@serialport/parser-readline')
