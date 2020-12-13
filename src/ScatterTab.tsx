@@ -52,9 +52,13 @@ const THEME = createMuiTheme({
 });
 
 
+interface ScatterTabProps {
+  data: BurstData[];
+  setData: (data: (BurstData[] | ((func: BurstData[]) => BurstData[]))) => void;
+}
 
 
-const ScatterTab = (props: {data: BurstData[], setData: (data: BurstData[]) => void}) => {
+const ScatterTab = (props: ScatterTabProps) => {
 
   
 
@@ -75,9 +79,9 @@ const ScatterTab = (props: {data: BurstData[], setData: (data: BurstData[]) => v
       colors.sort((a, b) => Math.random() - 0.5);
     }
     
-    props.setData(curr =>
-      curr.map((item, index) => {
-        let itemCopy = item;
+    props.setData((curr: BurstData[]): BurstData[] =>
+      curr.map((item: BurstData, index: number) => {
+        let itemCopy: BurstData = item;
         itemCopy.color = colors[index];
         return itemCopy;
       })
@@ -86,9 +90,9 @@ const ScatterTab = (props: {data: BurstData[], setData: (data: BurstData[]) => v
 
   const switchColors = () => {
     setShowColors((val) => !val);
-    props.setData((curr) =>
-      curr.map((item, index) => {
-        let itemCopy = item;
+    props.setData((curr: BurstData[]): BurstData[] =>
+      curr.map((item: BurstData, index: number) => {
+        let itemCopy: BurstData = item;
         itemCopy.color = !showColors ? colors[index] : "grey";
         return itemCopy;
       })
@@ -132,7 +136,7 @@ const ScatterTab = (props: {data: BurstData[], setData: (data: BurstData[]) => v
             <Scatter data={props.data} />
           </Grid>
           <Grid item xs={3} style={{ height: 650, overflowY: "scroll"}}>
-            {/*TODO: add border*/}
+            {/* TODO: add border? */}
               {props.data.map((value, index) => (
                 <Burst
                   burst={value}
@@ -145,7 +149,7 @@ const ScatterTab = (props: {data: BurstData[], setData: (data: BurstData[]) => v
 
           <Grid item container spacing={5} xs={12} alignItems="center">
 
-      <Grid item xs={1} style={{marginRight: -20}}>
+            <Grid item xs={1} style={{marginRight: -20}}>
               <Fab color={showColors ? "secondary" : "default"} aria-label="edit" onClick={() => switchColors()}>
                   {showColors ?  <InvertColorsIcon/> : <InvertColorsOffIcon/>}
               </Fab>
