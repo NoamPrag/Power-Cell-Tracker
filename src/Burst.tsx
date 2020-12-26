@@ -16,13 +16,7 @@ import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { green } from "@material-ui/core/colors";
 
 export type Position = { x: number; y: number };
-export type BurstCoordinates = [
-  Position,
-  Position,
-  Position,
-  Position,
-  Position
-];
+export type BurstCoordinates = Position[];
 
 export interface BurstData {
   burstNumber: number;

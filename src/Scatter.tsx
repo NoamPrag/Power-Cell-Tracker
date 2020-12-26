@@ -22,7 +22,7 @@ const Scatter = (props: { data: BurstData[] }) => {
   let p: {}[] = [];
   for (let i = 0; i < props.data.length; i++) {
     for (let j = 0; j < 5; j++) {
-      let obj = {
+      const obj = {
         [`x${i}`]: a[j + 5 * i].x,
         [`y${i}`]: a[j + 5 * i].y,
       };
@@ -35,7 +35,7 @@ const Scatter = (props: { data: BurstData[] }) => {
       <Chart data={p} height={650}>
         <ArgumentAxis showGrid />
         <ValueAxis />
-        {props.data.map((val, index) => (
+        {props.data.map((val: BurstData, index: number) => (
           <ScatterSeries
             argumentField={`x${index}`}
             valueField={`y${index}`}

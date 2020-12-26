@@ -1,5 +1,24 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
+import { dataGenerator } from "./DataGenerator";
+import { BurstCoordinates, Position } from "./Burst";
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
+
+ipcMain.on(
+  "Start-Arduino-Communication",
+  (event: Electron.IpcMainEvent, arg: unknown): void => {
+    setInterval(() => {
+      const coordinates: BurstCoordinates = dataGenerator(1)[0]
+        .burstCoordinates;
+
+      const scaledCoordinates: BurstCoordinates = coordinates.map(
+        (pos: Position): Position => ({ x: pos.x * 0.5, y: pos.y * 0.5 })
+      );
+
+      event.reply("Arduino-Data", scaledCoordinates);
+      console.log(coordinates);
+    }, 5000);
+  }
+);
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -13,15 +32,15 @@ const createWindow = (): void => {
     height: 800,
     width: 1100,
     webPreferences: {
-      nodeIntegration: true
-    }
+      nodeIntegration: true,
+    },
   });
 
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools();
+  // Open DevTools.
+  mainWindow.webContents.openDevTools();
 
   // set full screen
   mainWindow.setFullScreen(true);
