@@ -2,39 +2,59 @@ import React, { useState, useEffect } from "react";
 import ScatterTab from "./ScatterTab";
 import MenuAppBar from "./NavBar";
 import { dataGenerator } from "./DataGenerator";
-import { BurstData } from "./Burst";
+import { BurstData, Position, BurstCoordinates } from "./Burst";
+
+
+import { ipcRenderer } from "electron";
+
+
+ipcRenderer.send("Start-Arduino-Communication", "");
+
 
 
 export type Tab = "Scatter" | "Arduino" | "Stats";
 
-// const SerialPort: any = require('serialport')
-// const Readline: any = require('@serialport/parser-readline')
+let newBurstArray: BurstCoordinates = [];
 
-// TODO: Add serialport types.
-// const getArduinoPort = async (): Promise<string> => {
-//   const ports: any = await SerialPort.list();
-//   const arduinoPort: any = ports.filter((port: any): boolean => port.manufacturer.includes("Arduino"))[0];
-//   return arduinoPort.path;
-// };
+function useForceUpdate() {
+  const [value, setValue] = useState(0);
+  return () => setValue((value) => value + 1);
+}
 
 const App = () => {
+  const forceUpdate = useForceUpdate();
+
   const [data, setData] = useState<BurstData[]>(dataGenerator(6));
 
+  const [incomingBurst, setIncomingBurst] = useState<BurstCoordinates>([]);
+  
   const [tab, setTab] = useState<Tab>("Scatter");
 
-  // useEffect(() => {
-  //   getArduinoPort().then((portPath: string) => {
-  //     const port: any = new SerialPort(portPath, {
-  //       baudRate: 9600
-  //     })
-  
-  //     const parser: any = new Readline();
-  //     port.pipe(parser);
-  
-  //     parser.on('data', console.log);
-  //   }).catch(console.log)},
-  //   []
-  // );
+  useEffect(() => {
+    ipcRenderer.on("Arduino-Data", (event, arg: string) => {
+      const newBallData: number[] = arg.split(",").map(numStr => parseFloat(numStr));
+      const ballPosition: Position = {x: newBallData[1], y: newBallData[2]};
+      // newBurstArray.push(ballPosition);
+
+      setIncomingBurst(prev => [...prev, ballPosition]);
+
+      console.log(ballPosition);
+
+      if(incomingBurst.length == 5) {
+        const newBurst: BurstData = {
+          burstNumber: data.length,
+          burstCoordinates: incomingBurst,
+        };
+        console.log(newBurst);
+        // setData(prevData => [...prevData, newBurst]);
+        setData(prevData => [...prevData, newBurst]);
+        // newBurstArray = [];
+        setIncomingBurst([]);
+        forceUpdate();
+      }
+    });
+
+  }, []);
 
   return <div>
     <MenuAppBar setTab={tab => setTab(tab)}/>

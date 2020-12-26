@@ -93,6 +93,7 @@
     "@types/react-dom": "^16.9.8",
     "electron-squirrel-startup": "^1.0.0",
     "react": "^16.14.0",
-    "react-dom": "^16.14.0"
+    "react-dom": "^16.14.0",
+    "serialport": "^9.0.4"
   }
 }

@@ -5,11 +5,38 @@ import {
   ScatterSeries,
   ArgumentAxis,
   ValueAxis,
+  Tooltip,
 } from "@devexpress/dx-react-chart-material-ui";
 import { Animation } from "@devexpress/dx-react-chart";
+import { EventTracker } from '@devexpress/dx-react-chart';
+
 
 // import { colors } from "./App";
 import { Position, BurstData } from "./Burst";
+
+// const formatTooltipValue = format('.2f');
+
+const toolTipContent = ({}) => {
+  
+  return (
+    <div>
+      <table>
+        <tbody>
+          <tr>
+            <td>{'Burst:  1'}</td>
+          </tr>
+          <tr>
+            <td>{'Ball:   2'}</td>
+          </tr>
+          <tr>
+            <td>{'(x, y)'}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 
 const Scatter = (props: { data: BurstData[] }) => {
   let a: Position[] = [];
@@ -42,8 +69,10 @@ const Scatter = (props: { data: BurstData[] }) => {
             key={index}
             color={val.color}
             point={{ size: 15 }}
-          />
-        ))}
+            />
+            ))}
+          <EventTracker />
+          <Tooltip contentComponent={toolTipContent} />
         <Animation />
       </Chart>
     </Paper>
