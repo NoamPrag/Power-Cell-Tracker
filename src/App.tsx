@@ -16,32 +16,32 @@ const useForceUpdate = (): (() => void) => {
 };
 
 const App = () => {
-  const [data, setData] = useState<BurstData[]>(dataGenerator(6));
+  const [data, setData] = useState<BurstData[]>(dataGenerator(30));
 
   const [tab, setTab] = useState<Tab>("Arduino");
 
   const forceUpdate: () => void = useForceUpdate();
 
-  useEffect((): void => {
-    ipcRenderer.on(
-      "Arduino-Data",
-      (
-        _event: Electron.IpcRendererEvent,
-        burstCoordinates: BurstCoordinates
-      ): void => {
-        setData((prevData: BurstData[]): BurstData[] => {
-          const newBurst: BurstData = {
-            burstCoordinates,
-            burstNumber: prevData.length + 1,
-          };
-          console.log(newBurst);
-          return [...prevData, newBurst];
-        });
+  // useEffect((): void => {
+  //   ipcRenderer.on(
+  //     "Arduino-Data",
+  //     (
+  //       _event: Electron.IpcRendererEvent,
+  //       burstCoordinates: BurstCoordinates
+  //     ): void => {
+  //       setData((prevData: BurstData[]): BurstData[] => {
+  //         const newBurst: BurstData = {
+  //           burstCoordinates,
+  //           burstNumber: prevData.length + 1,
+  //         };
+  //         console.log(newBurst);
+  //         return [...prevData, newBurst];
+  //       });
 
-        forceUpdate();
-      }
-    );
-  }, []);
+  //       forceUpdate();
+  //     }
+  //   );
+  // }, []);
 
   return (
     <div>

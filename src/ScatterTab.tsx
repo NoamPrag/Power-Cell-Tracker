@@ -10,6 +10,8 @@ import InvertColorsOffIcon from "@material-ui/icons/InvertColorsOff";
 import SaveIcon from "@material-ui/icons/Save";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 
+import ScatterChart from "./ChartJsScatter";
+
 export let colors = [
   "#2196f3",
   "#3568ca",
@@ -129,6 +131,7 @@ const ScatterTab = (props: ScatterTabProps) => {
         >
           <Grid item xs={9}>
             {/* <Scatter data={props.data} /> */}
+            <ScatterChart />
           </Grid>
 
           <Grid item xs={3} style={{ height: 650, overflowY: "scroll" }}>
