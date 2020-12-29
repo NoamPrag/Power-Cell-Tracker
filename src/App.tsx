@@ -18,7 +18,7 @@ const useForceUpdate = (): (() => void) => {
 const App = () => {
   const [data, setData] = useState<BurstData[]>(dataGenerator(30));
 
-  const [tab, setTab] = useState<Tab>("Arduino");
+  const [tab, setTab] = useState<Tab>("Scatter");
 
   const forceUpdate: () => void = useForceUpdate();
 
