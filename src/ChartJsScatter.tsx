@@ -66,10 +66,29 @@ const options: {} = {
     yAxes: [
       {
         ticks: {
+          // fontSize: 14,
           beginAtZero: true,
+          suggestedMin: -50,
+          suggestedMax: 50,
         },
       },
     ],
+    xAxes: [
+      {
+        ticks: {
+          beginAtZero: true,
+          suggestedMin: -50,
+          suggestedMax: 50,
+        },
+      }
+    ]
+  },
+  layout:{
+    padding: {
+      top: 20,
+      bottom: 10,
+      right: 30,
+    }
   },
   animation: {
     duration: 700,
@@ -89,13 +108,16 @@ const options: {} = {
     cornerRadius: 6,
     backgroundColor: 'rgba(255,255,255,1)',
     borderColor: 'rgba(0,0,0,0.5)',
-    borderWidth: 2,
+    borderWidth: 1,
     bodyFontColor: '#000',
-    bodyFontSize: 15,
-    bodySpacing: 5,
+    bodyFontSize: 16,
+    bodyAlign: 'center',
+    // bodySpacing: 100,
     displayColors: false,
     xPadding: 10,
     yPadding: 10,
+
+
 
   }
 
