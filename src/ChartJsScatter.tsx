@@ -1,10 +1,13 @@
 import { Chart } from "@devexpress/dx-react-chart-material-ui";
-import { NearMeSharp } from "@material-ui/icons";
+import { NearMeSharp, SportsRugbySharp } from "@material-ui/icons";
+import Tooltip from "material-ui/internal/Tooltip";
 import React from "react";
+import $ from "jquery";
 
 import { Scatter, defaults } from "react-chartjs-2";
 
-defaults.global.defaultFontFamily	= '"Poppins", sans-serif';
+defaults.global.defaultFontFamily = '"Poppins", sans-serif';
+defaults.global.tooltip;
 
 let positions: {}[] = [];
 
@@ -55,8 +58,6 @@ const data: {} = {
         "#3ea786",
         "#2f9ebd",
       ],
-	
-
     },
   ],
 };
@@ -80,15 +81,15 @@ const options: {} = {
           suggestedMin: -50,
           suggestedMax: 50,
         },
-      }
-    ]
+      },
+    ],
   },
-  layout:{
+  layout: {
     padding: {
       top: 20,
       bottom: 10,
       right: 30,
-    }
+    },
   },
   animation: {
     duration: 700,
@@ -96,31 +97,128 @@ const options: {} = {
   },
   legend: {
     display: false,
-
   },
-  tooltips:{
+  tooltips: {
+    enabled: false,
 
-    mode: 'single',
+    mode: "single",
     intersect: true,
 
-    caretPadding: 5,
-    caretSize: 7,
-    cornerRadius: 6,
-    backgroundColor: 'rgba(255,255,255,1)',
-    borderColor: 'rgba(0,0,0,0.5)',
-    borderWidth: 1,
-    bodyFontColor: '#000',
-    bodyFontSize: 16,
-    bodyAlign: 'center',
-    // bodySpacing: 100,
+    // caretPadding: 5,
+    // caretSize: 7,
+    // cornerRadius: 6,
+    // backgroundColor: "rgba(255,255,255,1)",
+    // borderColor: "rgba(0,0,0,0.5)",
+    // borderWidth: 1,
+    // bodyFontColor: "#000",
+    // bodyFontSize: 16,
+    // bodyAlign: "center",
+    // // bodySpacing: 100,
+    // displayColors: false,
+    // xPadding: 10,
+    // yPadding: 10,
+
     displayColors: false,
-    xPadding: 10,
-    yPadding: 10,
+    titleFontSize: 16,
+    bodyFontSize: 14,
+    xPadding: 5,
+    yPadding: 5,
+    // callbacks: {
+    //   label: (tooltipItem: { value: any }, data: any) => {
+    //     return ` ${tooltipItem.value}`;
+    //   },
+    // },
 
+    custom: function (tooltipModel: {
+      opacity: number;
+      yAlign: string;
+      body: any[];
+      title: any[];
+      labelColors: { [x: string]: any };
+      caretX: any;
+      caretY: any;
+      _bodyFontFamily: string;
+      bodyFontSize: string;
+      _bodyFontStyle: string;
+      yPadding: string;
+      xPadding: string;
+    }) {
+      // Tooltip Element
+      var tooltipEl = document.getElementById("chartjs-tooltip");
 
+      // Create element on first render
+      if (!tooltipEl) {
+        tooltipEl = document.createElement("div");
+        tooltipEl.id = "chartjs-tooltip";
+        tooltipEl.innerHTML = "<table></table>";
+        document.body.appendChild(tooltipEl);
+      }
 
-  }
+      // Hide if no tooltip
+      if (tooltipModel.opacity === 0) {
+        tooltipEl.style.opacity = "0";
+        return;
+      }
 
+      // Set caret Position
+      tooltipEl.classList.remove("above", "below", "no-transform");
+      if (tooltipModel.yAlign) {
+        tooltipEl.classList.add(tooltipModel.yAlign);
+      } else {
+        tooltipEl.classList.add("no-transform");
+      }
+
+      function getBody(bodyItem: { lines: any }) {
+        return bodyItem.lines;
+      }
+
+      // Set Text
+      if (tooltipModel.body) {
+        var titleLines = tooltipModel.title || [];
+        var bodyLines = tooltipModel.body.map(getBody);
+
+        var innerHtml = "<thead>";
+
+        titleLines.forEach(function (title: string) {
+          innerHtml += "<tr><th>" + title + "</th></tr>";
+        });
+        innerHtml += "</thead><tbody>";
+
+        bodyLines.forEach(function (body: string, i: string | number) {
+          var colors = tooltipModel.labelColors[i];
+          var style = "background:" + colors.backgroundColor;
+          style += "; border-color:" + colors.borderColor;
+          style += "; border-width: 2px";
+          var span = '<span style="' + style + '"></span>';
+          innerHtml += "<tr><td>" + span + body + "</td></tr>";
+        });
+        innerHtml += "</tbody>";
+
+        var tableRoot = tooltipEl.querySelector("table");
+        tableRoot.innerHTML = innerHtml;
+      }
+
+      // `this` will be the overall tooltip
+      var position = this._chart.canvas.getBoundingClientRect();
+
+      // Display, position, and set styles for font
+      tooltipEl.style.opacity = "1";
+      tooltipEl.style.position = "absolute";
+      tooltipEl.style.left =
+        position.left + window.pageXOffset + tooltipModel.caretX - 55 + "px";
+      tooltipEl.style.top =
+        position.top + window.pageYOffset + tooltipModel.caretY - 50 + "px";
+      tooltipEl.style.fontFamily = tooltipModel._bodyFontFamily;
+      tooltipEl.style.fontSize = tooltipModel.bodyFontSize + "px";
+      tooltipEl.style.fontStyle = tooltipModel._bodyFontStyle;
+      tooltipEl.style.padding =
+        tooltipModel.yPadding + "px " + tooltipModel.xPadding + "px";
+      tooltipEl.style.pointerEvents = "none";
+      tooltipEl.style.boxShadow = "0px 1px 5px 0px #ccc";
+      tooltipEl.style.backgroundColor = "rgba(255,255,255,1)";
+      tooltipEl.style.borderRadius = "6px";
+    },
+  },
 };
 
 const ScatterChart = (): JSX.Element => {
