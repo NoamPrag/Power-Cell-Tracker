@@ -4,18 +4,18 @@ import MenuAppBar from "./NavBar";
 import { dataGenerator } from "./DataGenerator";
 import { BurstCoordinates, BurstData } from "./Burst";
 
-import { ipcRenderer } from "electron";
+// import { ipcRenderer } from "electron";
 
-import { ipcRenderer } from "electron";
+// import { ipcRenderer } from "electron";
 
 
-ipcRenderer.send("Start-Arduino-Communication", "");
+// ipcRenderer.send("Start-Arduino-Communication", "");
 
 
 
 export type Tab = "Scatter" | "Arduino" | "Stats";
 
-ipcRenderer.send("Start-Arduino-Communication", null);
+// ipcRenderer.send ("Start-Arduino-Communication", null);
 
 const useForceUpdate = (): (() => void) => {
   const [_value, setValue] = useState(0);

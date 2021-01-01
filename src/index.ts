@@ -2,34 +2,34 @@ import { app, BrowserWindow, ipcMain } from "electron";
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
 
-const SerialPort: any = require('serialport');
-const Readline: any = require('@serialport/parser-readline');
+// const SerialPort: any = require('serialport');
+// const Readline: any = require('@serialport/parser-readline');
 
 
 
-// TODO: Add serialport types.
-const getArduinoPort = async (): Promise<string> => {
-  const ports: any = await SerialPort.list();
-  const arduinoPort: any = ports.filter((port: any): boolean => port.manufacturer.includes("Arduino"))[0];
-  return arduinoPort.path;
-};
+// // TODO: Add serialport types.
+// const getArduinoPort = async (): Promise<string> => {
+//   const ports: any = await SerialPort.list();
+//   const arduinoPort: any = ports.filter((port: any): boolean => port.manufacturer.includes("Arduino"))[0];
+//   return arduinoPort.path;
+// };
 
 
-ipcMain.on("Start-Arduino-Communication", (event, arg) => {    
-  getArduinoPort().then((portPath: string) => {
-    const port: any = new SerialPort(portPath, {
-      baudRate: 9600
-    });
+// ipcMain.on("Start-Arduino-Communication", (event, arg) => {    
+//   getArduinoPort().then((portPath: string) => {
+//     const port: any = new SerialPort(portPath, {
+//       baudRate: 9600
+//     });
 
-    const parser: any = new Readline();
-    port.pipe(parser);
+//     const parser: any = new Readline();
+//     port.pipe(parser);
 
-    parser.on('data', (data: any) => {
-      console.log(data);
-      event.reply("Arduino-Data", data);
-    });
-  }).catch(console.log);  
-});
+//     parser.on('data', (data: any) => {
+//       console.log(data);
+//       event.reply("Arduino-Data", data);
+//     });
+//   }).catch(console.log);  
+// });
 
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
