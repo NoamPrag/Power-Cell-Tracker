@@ -3,7 +3,7 @@ import Burst, { BurstData, Position } from "./Burst";
 import { Grid, Typography, Fab, Button } from "@material-ui/core";
 import Scatter from "./Scatter";
 import { accuracy, precision } from "./Calculations";
-import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import { MuiThemeProvider, createMuiTheme, styled } from "@material-ui/core/styles";
 import ProgressBar from "./ProgressBar";
 import InvertColorsIcon from "@material-ui/icons/InvertColors";
 import InvertColorsOffIcon from "@material-ui/icons/InvertColorsOff";
@@ -133,7 +133,6 @@ const ScatterTab = (props: ScatterTabProps) => {
             {/* <Scatter data={props.data} /> */}
             <ScatterChart />
           </Grid>
-
           <Grid item xs={3} style={{ height: 650, overflowY: "scroll" }}>
             {/* TODO: add border? */}
             {props.data.map((value, index) => (

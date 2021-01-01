@@ -6,6 +6,13 @@ import { BurstCoordinates, BurstData } from "./Burst";
 
 import { ipcRenderer } from "electron";
 
+import { ipcRenderer } from "electron";
+
+
+ipcRenderer.send("Start-Arduino-Communication", "");
+
+
+
 export type Tab = "Scatter" | "Arduino" | "Stats";
 
 ipcRenderer.send("Start-Arduino-Communication", null);
@@ -18,6 +25,8 @@ const useForceUpdate = (): (() => void) => {
 const App = () => {
   const [data, setData] = useState<BurstData[]>(dataGenerator(30));
 
+  const [incomingBurst, setIncomingBurst] = useState<BurstCoordinates>([]);
+  
   const [tab, setTab] = useState<Tab>("Scatter");
 
   const forceUpdate: () => void = useForceUpdate();

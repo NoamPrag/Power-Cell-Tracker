@@ -1,24 +1,36 @@
 import { app, BrowserWindow, ipcMain } from "electron";
-import { dataGenerator } from "./DataGenerator";
-import { BurstCoordinates, Position } from "./Burst";
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
-ipcMain.on(
-  "Start-Arduino-Communication",
-  (event: Electron.IpcMainEvent, arg: unknown): void => {
-    setInterval(() => {
-      const coordinates: BurstCoordinates = dataGenerator(1)[0]
-        .burstCoordinates;
 
-      const scaledCoordinates: BurstCoordinates = coordinates.map(
-        (pos: Position): Position => ({ x: pos.x * 0.5, y: pos.y * 0.5 })
-      );
+const SerialPort: any = require('serialport');
+const Readline: any = require('@serialport/parser-readline');
 
-      event.reply("Arduino-Data", scaledCoordinates);
-      console.log(coordinates);
-    }, 5000);
-  }
-);
+
+
+// TODO: Add serialport types.
+const getArduinoPort = async (): Promise<string> => {
+  const ports: any = await SerialPort.list();
+  const arduinoPort: any = ports.filter((port: any): boolean => port.manufacturer.includes("Arduino"))[0];
+  return arduinoPort.path;
+};
+
+
+ipcMain.on("Start-Arduino-Communication", (event, arg) => {    
+  getArduinoPort().then((portPath: string) => {
+    const port: any = new SerialPort(portPath, {
+      baudRate: 9600
+    });
+
+    const parser: any = new Readline();
+    port.pipe(parser);
+
+    parser.on('data', (data: any) => {
+      console.log(data);
+      event.reply("Arduino-Data", data);
+    });
+  }).catch(console.log);  
+});
+
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -39,7 +51,7 @@ const createWindow = (): void => {
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-  // Open DevTools.
+  // Open the DevTools.
   mainWindow.webContents.openDevTools();
 
   // set full screen
