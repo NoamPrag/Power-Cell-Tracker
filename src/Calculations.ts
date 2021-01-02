@@ -20,7 +20,8 @@ const averageDistance = (
   referencePoint: Position
 ): number =>
   coordinates.reduce(
-    (acc: number, curr: Position): number => acc + getDistance(curr, referencePoint),
+    (acc: number, curr: Position): number =>
+      acc + getDistance(curr, referencePoint),
     0
   ) / coordinates.length;
 
@@ -41,12 +42,18 @@ const standardDeviation = (
   );
 };
 
-
-const sigmoid = (l: number, k: number, x0: number, value: number): number => l / (1 + Math.pow(Math.E, -k*(value - x0)));
-
+const sigmoid = (l: number, k: number, x0: number, value: number): number =>
+  l / (1 + Math.pow(Math.E, -k * (value - x0)));
 
 export const accuracy = (coordinates: Position[]) =>
   100 * (1 - sigmoid(0.5, 4, 1, averageDistance(coordinates, zeroPosition)));
 
 export const precision = (coordinates: Position[]) =>
-  100 * (1 - sigmoid(1.2, 4, 1, standardDeviation(coordinates, averagePoint(coordinates))));
+  100 *
+  (1 -
+    sigmoid(
+      1.2,
+      4,
+      1,
+      standardDeviation(coordinates, averagePoint(coordinates))
+    ));

@@ -1,16 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import LinearProgress, {
   LinearProgressProps,
 } from "@material-ui/core/LinearProgress";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import {
-  MuiThemeProvider,
-  createMuiTheme,
-  createStyles,
-  withStyles,
-  Theme,
-} from "@material-ui/core/styles";
+import { createStyles, withStyles, Theme } from "@material-ui/core/styles";
 
 const BorderLinearProgress = withStyles((theme: Theme) =>
   createStyles({

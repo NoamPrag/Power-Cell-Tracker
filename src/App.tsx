@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import ScatterTab from "./ScatterTab";
 import MenuAppBar from "./NavBar";
 import { dataGenerator } from "./DataGenerator";
-import { BurstCoordinates, BurstData } from "./Burst";
+import { BurstData, Position } from "./Burst";
+import { accuracy, precision } from "./calculations";
 
 import { ipcRenderer } from "electron";
 
@@ -10,41 +11,48 @@ export type Tab = "Scatter" | "Arduino" | "Stats";
 
 ipcRenderer.send("Start-Arduino-Communication", null);
 
-const useForceUpdate = (): (() => void) => {
-  const [_value, setValue] = useState(0);
-  return (): void => setValue((prev: number): number => prev + 1);
-};
+/*
+Data to track:
+ * ball positions (in bursts groups)
+ * total accuracy in precision
+ * accuracy in precision for every burst
+*/
 
-const App = () => {
-  const [data, setData] = useState<BurstData[]>(dataGenerator(30));
+const App = (): JSX.Element => {
+  const [data, setData] = useState<BurstData[]>(dataGenerator(6));
+
+  const [totalAccuracy, setTotalAccuracy] = useState<number>(0);
+  const [totalPrecision, setTotalPrecision] = useState<number>(0);
+
+  useEffect(() => {
+    const allPositions: Position[] = data.reduce(
+      (acc: Position[], curr: BurstData): Position[] => [
+        ...acc,
+        ...curr.burstCoordinates,
+      ],
+      []
+    );
+    setTotalAccuracy(accuracy(allPositions));
+    setTotalPrecision(precision(allPositions));
+  }, [data]);
+
+  useEffect((): void => {
+    ipcRenderer.on(
+      "Arduino-Data",
+      (_event: Electron.IpcRendererEvent, newBurst: BurstData): void => {
+        setData((prevData: BurstData[]): BurstData[] => {
+          newBurst.burstNumber = prevData.length + 1;
+          console.log(newBurst);
+          return [...prevData, newBurst];
+        });
+      }
+    );
+  }, []);
 
   const [tab, setTab] = useState<Tab>("Arduino");
 
-  const forceUpdate: () => void = useForceUpdate();
-
-  // useEffect((): void => {
-  //   ipcRenderer.on(
-  //     "Arduino-Data",
-  //     (
-  //       _event: Electron.IpcRendererEvent,
-  //       burstCoordinates: BurstCoordinates
-  //     ): void => {
-  //       setData((prevData: BurstData[]): BurstData[] => {
-  //         const newBurst: BurstData = {
-  //           burstCoordinates,
-  //           burstNumber: prevData.length + 1,
-  //         };
-  //         console.log(newBurst);
-  //         return [...prevData, newBurst];
-  //       });
-
-  //       forceUpdate();
-  //     }
-  //   );
-  // }, []);
-
   return (
-    <div>
+    <>
       <MenuAppBar setTab={(newTab: Tab): void => setTab(newTab)} />
 
       {tab === "Scatter" && (
@@ -53,6 +61,8 @@ const App = () => {
           setData={(
             newData: BurstData[] | ((func: BurstData[]) => BurstData[])
           ): void => setData(newData)}
+          totalAccuracy={totalAccuracy}
+          totalPrecision={totalPrecision}
         />
       )}
 
@@ -65,7 +75,7 @@ const App = () => {
       {tab === "Stats" && (
         <h1 style={{ position: "absolute", top: 100, left: 50 }}>Stats Tab</h1>
       )}
-    </div>
+    </>
   );
 };
 

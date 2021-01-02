@@ -1,15 +1,21 @@
 import React from "react";
-
 import { Scatter } from "react-chartjs-2";
 
-let positions: {}[] = [];
+import { BurstData, Position } from "./Burst";
 
-const rand = () => (Math.random() - 0.5) * 10;
+const rand = (range: number): number => (Math.random() - 0.5) * 2 * range;
 
-for (let i: number = 0; i < 1000; i++) {
-  const newPosition: { x: number; y: number } = { x: rand(), y: rand() };
-  positions.push(newPosition);
-}
+const generateRandPositions: (quantity: number, range: number) => Position[] = (
+  quantity: number,
+  range: number
+): Position[] =>
+  Array.from(Array(quantity).keys()).map(
+    (i: number): Position => ({ x: rand(range), y: rand(range) })
+  );
+
+const positions = generateRandPositions(500, 10);
+
+const generateDataSet = () => {};
 
 const data: {} = {
   datasets: [
@@ -52,10 +58,27 @@ const options: {} = {
   },
 };
 
-const ScatterChart = (): JSX.Element => {
+interface ScatterProps {
+  colors?: string[];
+  data?: BurstData[];
+}
+
+const ScatterChart = (props: ScatterProps): JSX.Element => {
+  const datasets: {}[] = props.data.map((burst: BurstData): {} => ({
+    pointRadius: 7,
+    label: `Burst #${burst.burstNumber}`,
+    data: burst.burstCoordinates,
+  }));
   return (
     <>
-      <Scatter data={data} options={options} />
+      <Scatter
+        data={{ datasets }}
+        options={{
+          ...options,
+          color: (context: { datasetIndex: number }): string =>
+            props.colors[context.datasetIndex],
+        }}
+      />
     </>
   );
 };

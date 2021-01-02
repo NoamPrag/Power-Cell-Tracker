@@ -1,22 +1,30 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import { dataGenerator } from "./DataGenerator";
-import { BurstCoordinates, Position } from "./Burst";
+import { BurstData, Position } from "./Burst";
+import { accuracy, precision } from "./Calculations";
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
+
+const updateRate_MS: number = 15000; // 15 seconds
 
 ipcMain.on(
   "Start-Arduino-Communication",
   (event: Electron.IpcMainEvent, arg: unknown): void => {
     setInterval(() => {
-      const coordinates: BurstCoordinates = dataGenerator(1)[0]
-        .burstCoordinates;
+      const coordinates: Position[] = dataGenerator(1)[0].burstCoordinates;
 
-      const scaledCoordinates: BurstCoordinates = coordinates.map(
+      const scaledCoordinates: Position[] = coordinates.map(
         (pos: Position): Position => ({ x: pos.x * 0.5, y: pos.y * 0.5 })
       );
 
-      event.reply("Arduino-Data", scaledCoordinates);
-      console.log(coordinates);
-    }, 5000);
+      const newBurst: BurstData = {
+        burstNumber: null,
+        burstCoordinates: scaledCoordinates,
+        accuracy: accuracy(scaledCoordinates),
+        precision: precision(scaledCoordinates),
+      };
+
+      event.reply("Arduino-Data", newBurst);
+    }, updateRate_MS);
   }
 );
 

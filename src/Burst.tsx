@@ -16,13 +16,14 @@ import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { green } from "@material-ui/core/colors";
 
 export type Position = { x: number; y: number };
-export type BurstCoordinates = Position[];
 
 export interface BurstData {
   burstNumber: number;
   color?: string;
-  powerCellCondition?: "new" | "ripped";
-  burstCoordinates: BurstCoordinates;
+  burstCoordinates: Position[];
+
+  accuracy?: number;
+  precision?: number;
 }
 
 const tabTheme = createMuiTheme({
@@ -38,12 +39,10 @@ const tabTheme = createMuiTheme({
 
 const Burst = (props: {
   burst: BurstData;
+  color: string;
   open: () => void;
   close: () => void;
 }) => {
-  const burstAccuracy: number = accuracy(props.burst.burstCoordinates);
-  const burstPrecision: number = precision(props.burst.burstCoordinates);
-
   const [opened, setOpened] = useState(false);
 
   const openBurst = () => {
@@ -98,7 +97,7 @@ const Burst = (props: {
               }}
             >
               <GpsFixedIcon />
-              <ProgressBar value={burstAccuracy} show={opened} />
+              <ProgressBar value={props.burst.accuracy} show={opened} />
             </div>
             <div
               style={{
@@ -110,7 +109,7 @@ const Burst = (props: {
               }}
             >
               <GrainIcon />
-              <ProgressBar value={burstPrecision} show={opened} />
+              <ProgressBar value={props.burst.precision} show={opened} />
             </div>
             <div
               style={{

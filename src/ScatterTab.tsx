@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import Burst, { BurstData, Position } from "./Burst";
+import Burst, { BurstData } from "./Burst";
 import { Grid, Typography, Fab, Button } from "@material-ui/core";
 import Scatter from "./Scatter";
-import { accuracy, precision } from "./Calculations";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import ProgressBar from "./ProgressBar";
 import InvertColorsIcon from "@material-ui/icons/InvertColors";
@@ -12,7 +11,7 @@ import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 
 import ScatterChart from "./ChartJsScatter";
 
-export let colors = [
+export const burstsColors: string[] = [
   "#2196f3",
   "#3568ca",
   "#3f51b5",
@@ -28,7 +27,7 @@ export let colors = [
   "#4caf50",
   "#3ea786",
   "#2f9ebd",
-];
+].sort(() => Math.random() - 0.5);
 
 // export const colors2 = [
 //   "#3f51b5",
@@ -41,7 +40,7 @@ export let colors = [
 
 function useForceUpdate() {
   const [value, setValue] = useState(0);
-  return () => setValue((value) => value + 1);
+  return () => setValue((prevValue) => prevValue + 1);
 }
 
 const THEME = createMuiTheme({
@@ -53,28 +52,15 @@ const THEME = createMuiTheme({
 interface ScatterTabProps {
   data: BurstData[];
   setData: (data: BurstData[] | ((func: BurstData[]) => BurstData[])) => void;
+  totalAccuracy: number;
+  totalPrecision: number;
 }
 
 const ScatterTab = (props: ScatterTabProps) => {
-  const allPositions: Position[] = props.data.reduce(
-    (acc: Position[], curr: BurstData): Position[] => [
-      ...acc,
-      ...curr.burstCoordinates,
-    ],
-    []
-  );
-
-  const totalPrecision: number = precision(allPositions);
-  const totalAccuracy: number = accuracy(allPositions);
-
   const [showColors, setShowColors] = useState(true);
+  const [colors, setColors] = useState<string[]>(burstsColors);
 
   useEffect(() => {
-    // Shuffle the colors array (bubble shuffle)
-    for (let i = 0; i < Math.pow(colors.length, 2); i++) {
-      colors.sort((a, b) => Math.random() - 0.5);
-    }
-
     props.setData((curr: BurstData[]): BurstData[] =>
       curr.map((item: BurstData, index: number) => {
         let itemCopy: BurstData = item;
@@ -131,7 +117,7 @@ const ScatterTab = (props: ScatterTabProps) => {
         >
           <Grid item xs={9}>
             {/* <Scatter data={props.data} /> */}
-            <ScatterChart />
+            <ScatterChart data={props.data} />
           </Grid>
 
           <Grid item xs={3} style={{ height: 650, overflowY: "scroll" }}>
@@ -139,6 +125,7 @@ const ScatterTab = (props: ScatterTabProps) => {
             {props.data.map((value, index) => (
               <Burst
                 burst={value}
+                color={value.color}
                 key={index}
                 open={() => openBurst(index)}
                 close={() => closeBurst(index)}
@@ -159,12 +146,12 @@ const ScatterTab = (props: ScatterTabProps) => {
 
             <Grid item xs={4}>
               <Typography variant="h5">Total Precision:</Typography>
-              <ProgressBar value={totalPrecision} show={true} />
+              <ProgressBar value={props.totalPrecision} show={true} />
             </Grid>
 
             <Grid item xs={4}>
               <Typography variant="h5">Total Accuracy:</Typography>
-              <ProgressBar value={totalAccuracy} show={true} />
+              <ProgressBar value={props.totalAccuracy} show={true} />
             </Grid>
 
             <Grid item xs={1} style={{ marginLeft: 70, marginRight: 30 }}>
