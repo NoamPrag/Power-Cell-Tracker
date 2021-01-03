@@ -8,7 +8,7 @@ import InvertColorsOffIcon from "@material-ui/icons/InvertColorsOff";
 import SaveIcon from "@material-ui/icons/Save";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 
-import ScatterChart from "./ChartJsScatter";
+import ScatterChart from "./ScatterChart";
 
 let burstsColors: string[] = [
   "#2196f3",
