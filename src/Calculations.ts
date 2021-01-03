@@ -6,7 +6,7 @@ export const getDistance = (p1: Position, p2: Position): number =>
   Math.hypot(p1.x - p2.x, p1.y - p2.y);
 
 const averagePoint = (coordinates: Position[]): Position => {
-  let sum = coordinates.reduce(
+  const sum = coordinates.reduce(
     (acc, curr): Position => ({ x: acc.x + curr.x, y: acc.y + curr.y })
   );
   return {
@@ -30,7 +30,7 @@ const standardDeviation = (
   referencePoint: Position
 ) => {
   const average: number = averageDistance(coordinates, referencePoint);
-  const distances: number[] = coordinates.map((p) =>
+  const distances: number[] = coordinates.map((p: Position): number =>
     getDistance(p, referencePoint)
   );
 
@@ -57,3 +57,6 @@ export const precision = (coordinates: Position[]) =>
       1,
       standardDeviation(coordinates, averagePoint(coordinates))
     ));
+
+export const inInnerPort = (position: Position): boolean =>
+  getDistance(position, zeroPosition) < 1.5;

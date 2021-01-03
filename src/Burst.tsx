@@ -11,7 +11,7 @@ import SportsSoccerIcon from "@material-ui/icons/SportsSoccer";
 import GpsFixedIcon from "@material-ui/icons/GpsFixed";
 import GrainIcon from "@material-ui/icons/Grain";
 import ProgressBar from "./ProgressBar";
-import { accuracy, precision, getDistance, zeroPosition } from "./Calculations";
+import { getDistance, zeroPosition } from "./Calculations";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { green } from "@material-ui/core/colors";
 
@@ -19,8 +19,9 @@ export type Position = { x: number; y: number };
 
 export interface BurstData {
   burstNumber: number;
-  color?: string;
   burstCoordinates: Position[];
+
+  inInnerPort: boolean[];
 
   accuracy?: number;
   precision?: number;
@@ -40,24 +41,9 @@ const tabTheme = createMuiTheme({
 const Burst = (props: {
   burst: BurstData;
   color: string;
-  open: () => void;
-  close: () => void;
-}) => {
+  changeOpen?: () => void;
+}): JSX.Element => {
   const [opened, setOpened] = useState(false);
-
-  const openBurst = () => {
-    setOpened((current) => !current);
-    if (!opened) {
-      props.open();
-    }
-  };
-
-  const closeBurst = () => {
-    setOpened((current) => !current);
-    if (opened) {
-      props.close();
-    }
-  };
 
   return (
     <Container maxWidth="sm" style={{ margin: "10px 0" }}>
@@ -65,9 +51,12 @@ const Burst = (props: {
         <ThemeProvider theme={tabTheme}>
           <AccordionSummary
             expandIcon={<ExpandMore />}
-            onClick={opened ? closeBurst : openBurst}
+            onClick={() => {
+              setOpened((current: boolean): boolean => !current);
+              props.changeOpen();
+            }}
           >
-            <Typography variant="h5" style={{ color: props.burst.color }}>
+            <Typography variant="h5" style={{ color: props.color }}>
               Burst #{props.burst.burstNumber}
             </Typography>
           </AccordionSummary>
@@ -117,19 +106,15 @@ const Burst = (props: {
                 flexDirection: "row",
               }}
             >
-              {props.burst.burstCoordinates.map((val, index) => {
-                const color =
-                  getDistance(val, zeroPosition) > 1.5
-                    ? "secondary"
-                    : "primary";
-                return (
+              {props.burst.inInnerPort.map(
+                (inInnerPort: boolean, index: number): JSX.Element => (
                   <SportsSoccerIcon
                     key={index}
                     fontSize="large"
-                    color={color}
+                    color={inInnerPort ? "secondary" : "primary"}
                   />
-                );
-              })}
+                )
+              )}
             </div>
           </div>
         </AccordionDetails>

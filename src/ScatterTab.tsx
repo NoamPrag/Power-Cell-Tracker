@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Burst, { BurstData } from "./Burst";
 import { Grid, Typography, Fab, Button } from "@material-ui/core";
-import Scatter from "./Scatter";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import ProgressBar from "./ProgressBar";
 import InvertColorsIcon from "@material-ui/icons/InvertColors";
@@ -11,7 +10,7 @@ import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 
 import ScatterChart from "./ChartJsScatter";
 
-export const burstsColors: string[] = [
+let burstsColors: string[] = [
   "#2196f3",
   "#3568ca",
   "#3f51b5",
@@ -27,9 +26,9 @@ export const burstsColors: string[] = [
   "#4caf50",
   "#3ea786",
   "#2f9ebd",
-].sort(() => Math.random() - 0.5);
+].sort((): number => Math.random() - 0.5); // Shuffling array
 
-// export const colors2 = [
+// const colors2 = [
 //   "#3f51b5",
 //   "#f50057",
 //   "#f44336",
@@ -38,16 +37,16 @@ export const burstsColors: string[] = [
 //   "#4caf50",
 // ];
 
-function useForceUpdate() {
-  const [value, setValue] = useState(0);
-  return () => setValue((prevValue) => prevValue + 1);
-}
-
 const THEME = createMuiTheme({
   typography: {
     fontFamily: `"Poppins", sans-serif`,
   },
 });
+
+const useForceUpdate = (): (() => void) => {
+  const [value, setValue] = useState(0);
+  return (): void => setValue(value + 1);
+};
 
 interface ScatterTabProps {
   data: BurstData[];
@@ -56,54 +55,21 @@ interface ScatterTabProps {
   totalPrecision: number;
 }
 
-const ScatterTab = (props: ScatterTabProps) => {
+const ScatterTab = (props: ScatterTabProps): JSX.Element => {
   const [showColors, setShowColors] = useState(true);
-  const [colors, setColors] = useState<string[]>(burstsColors);
 
-  useEffect(() => {
-    props.setData((curr: BurstData[]): BurstData[] =>
-      curr.map((item: BurstData, index: number) => {
-        let itemCopy: BurstData = item;
-        itemCopy.color = colors[index];
-        return itemCopy;
-      })
-    );
+  const [openedBursts, setOpenedBursts] = useState<boolean[]>(
+    props.data.map((_): false => false)
+  );
+
+  useEffect((): void => {
+    burstsColors.sort((): number => Math.random() - 0.5); // Shuffling array
   }, []);
 
-  const switchColors = () => {
-    setShowColors((val) => !val);
-
-    props.setData((curr: BurstData[]): BurstData[] =>
-      curr.map((item: BurstData, index: number) => {
-        let itemCopy: BurstData = item;
-        itemCopy.color = !showColors ? colors[index] : "grey";
-        return itemCopy;
-      })
-    );
-  };
-
-  const forceUpdate = useForceUpdate();
-
-  const openBurst = (burstNumber: number) => {
-    if (!showColors) {
-      const dataCopy = props.data;
-      dataCopy[burstNumber].color = colors[burstNumber];
-      props.setData(dataCopy);
-      forceUpdate();
-    }
-  };
-
-  const closeBurst = (burstNumber: number) => {
-    if (!showColors) {
-      const dataCopy = props.data;
-      dataCopy[burstNumber].color = "grey";
-      props.setData(dataCopy);
-      forceUpdate();
-    }
-  };
+  const forceUpdate: () => void = useForceUpdate();
 
   return (
-    <div>
+    <>
       <MuiThemeProvider theme={THEME}>
         <Grid
           container
@@ -116,21 +82,39 @@ const ScatterTab = (props: ScatterTabProps) => {
           }}
         >
           <Grid item xs={9}>
-            {/* <Scatter data={props.data} /> */}
-            <ScatterChart data={props.data} />
+            <ScatterChart
+              data={props.data}
+              colors={openedBursts.map(
+                (opened: boolean, index: number): string =>
+                  showColors || opened
+                    ? burstsColors[index % burstsColors.length]
+                    : "grey"
+              )}
+            />
           </Grid>
 
           <Grid item xs={3} style={{ height: 650, overflowY: "scroll" }}>
-            {/* TODO: add border? */}
-            {props.data.map((value, index) => (
-              <Burst
-                burst={value}
-                color={value.color}
-                key={index}
-                open={() => openBurst(index)}
-                close={() => closeBurst(index)}
-              />
-            ))}
+            {props.data.map(
+              (value: BurstData, index: number): JSX.Element => (
+                <Burst
+                  burst={value}
+                  color={
+                    showColors || openedBursts[index]
+                      ? burstsColors[index % burstsColors.length]
+                      : "grey"
+                  }
+                  key={index}
+                  changeOpen={(): void => {
+                    setOpenedBursts((prev: boolean[]): boolean[] => {
+                      prev[index] = !prev[index];
+                      return prev;
+                    });
+
+                    forceUpdate();
+                  }}
+                />
+              )
+            )}
           </Grid>
 
           <Grid item container spacing={5} xs={12} alignItems="center">
@@ -138,7 +122,7 @@ const ScatterTab = (props: ScatterTabProps) => {
               <Fab
                 color={showColors ? "secondary" : "default"}
                 aria-label="edit"
-                onClick={() => switchColors()}
+                onClick={() => setShowColors((val: boolean): boolean => !val)}
               >
                 {showColors ? <InvertColorsIcon /> : <InvertColorsOffIcon />}
               </Fab>
@@ -178,7 +162,7 @@ const ScatterTab = (props: ScatterTabProps) => {
           </Grid>
         </Grid>
       </MuiThemeProvider>
-    </div>
+    </>
   );
 };
 

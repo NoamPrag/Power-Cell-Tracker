@@ -1,5 +1,5 @@
 import { BurstData, Position } from "./Burst";
-import { accuracy, precision } from "./Calculations";
+import { accuracy, precision, inInnerPort } from "./Calculations";
 
 const getRandom = (): number => {
   const randomValue: number = Math.random();
@@ -24,6 +24,11 @@ const burstGenerator = (burstNumber: number): BurstData => {
   return {
     burstNumber,
     burstCoordinates: positions,
+
+    inInnerPort: positions.map((position: Position): boolean =>
+      inInnerPort(position)
+    ),
+
     accuracy: accuracy(positions),
     precision: precision(positions),
   };

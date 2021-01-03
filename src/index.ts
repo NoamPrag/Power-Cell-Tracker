@@ -1,15 +1,15 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import { dataGenerator } from "./DataGenerator";
 import { BurstData, Position } from "./Burst";
-import { accuracy, precision } from "./Calculations";
+import { accuracy, precision, inInnerPort } from "./Calculations";
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
-const updateRate_MS: number = 15000; // 15 seconds
+const updateRate_MS: number = 60000;
 
 ipcMain.on(
   "Start-Arduino-Communication",
-  (event: Electron.IpcMainEvent, arg: unknown): void => {
-    setInterval(() => {
+  (event: Electron.IpcMainEvent): void => {
+    setInterval((): void => {
       const coordinates: Position[] = dataGenerator(1)[0].burstCoordinates;
 
       const scaledCoordinates: Position[] = coordinates.map(
@@ -19,6 +19,11 @@ ipcMain.on(
       const newBurst: BurstData = {
         burstNumber: null,
         burstCoordinates: scaledCoordinates,
+
+        inInnerPort: scaledCoordinates.map((position: Position): boolean =>
+          inInnerPort(position)
+        ),
+
         accuracy: accuracy(scaledCoordinates),
         precision: precision(scaledCoordinates),
       };

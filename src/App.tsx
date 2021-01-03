@@ -11,13 +11,6 @@ export type Tab = "Scatter" | "Arduino" | "Stats";
 
 ipcRenderer.send("Start-Arduino-Communication", null);
 
-/*
-Data to track:
- * ball positions (in bursts groups)
- * total accuracy in precision
- * accuracy in precision for every burst
-*/
-
 const App = (): JSX.Element => {
   const [data, setData] = useState<BurstData[]>(dataGenerator(6));
 
@@ -42,7 +35,6 @@ const App = (): JSX.Element => {
       (_event: Electron.IpcRendererEvent, newBurst: BurstData): void => {
         setData((prevData: BurstData[]): BurstData[] => {
           newBurst.burstNumber = prevData.length + 1;
-          console.log(newBurst);
           return [...prevData, newBurst];
         });
       }
