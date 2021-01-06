@@ -56,7 +56,7 @@ interface ScatterTabProps {
 }
 
 const ScatterTab = (props: ScatterTabProps): JSX.Element => {
-  const [showColors, setShowColors] = useState(true);
+  const [showColors, setShowColors] = useState(false);
 
   const [openedBursts, setOpenedBursts] = useState<boolean[]>(
     props.data.map((_): false => false)
@@ -76,9 +76,10 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
           style={{
             position: "fixed",
             width: "95vw",
-            height: "85vh",
+            height: "75vh",
             left: "3vw",
             top: 100,
+            display: "flex",
           }}
         >
           <Grid item xs={9}>
@@ -88,7 +89,7 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
                 (opened: boolean, index: number): string =>
                   showColors || opened
                     ? burstsColors[index % burstsColors.length]
-                    : "grey"
+                    : "#e5e5e5"
               )}
             />
           </Grid>
@@ -117,7 +118,14 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
             )}
           </Grid>
 
-          <Grid item container spacing={5} xs={12} alignItems="center">
+          <Grid
+            item
+            container
+            spacing={5}
+            xs={12}
+            alignItems="center"
+            style={{ marginTop: 25 }}
+          >
             <Grid item xs={1} style={{ marginRight: -20 }}>
               <Fab
                 color={showColors ? "secondary" : "default"}

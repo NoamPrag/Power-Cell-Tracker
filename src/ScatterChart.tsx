@@ -1,23 +1,8 @@
 import React from "react";
 import { Scatter } from "react-chartjs-2";
+import { options } from "./ScatterOptions";
 
 import { BurstData } from "./Burst";
-
-const options: {} = {
-  scales: {
-    yAxes: [
-      {
-        ticks: {
-          beginAtZero: true,
-        },
-      },
-    ],
-  },
-  animation: {
-    duration: 700,
-    easing: "easeInOutQuad",
-  },
-};
 
 interface ScatterProps {
   colors: string[];
@@ -35,7 +20,7 @@ const ScatterChart = (props: ScatterProps): JSX.Element => {
   );
   return (
     <>
-      <Scatter data={{ datasets }} options={options} />
+      <Scatter data={{ datasets }} height={400} options={options} />
     </>
   );
 };

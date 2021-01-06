@@ -13,7 +13,7 @@ ipcMain.on(
       const coordinates: Position[] = dataGenerator(1)[0].burstCoordinates;
 
       const scaledCoordinates: Position[] = coordinates.map(
-        (pos: Position): Position => ({ x: pos.x * 0.5, y: pos.y * 0.5 })
+        (pos: Position): Position => ({ x: pos.x, y: pos.y })
       );
 
       const newBurst: BurstData = {
@@ -28,7 +28,7 @@ ipcMain.on(
         precision: precision(scaledCoordinates),
       };
 
-      event.reply("Arduino-Data", newBurst);
+      event.reply("Arduino-Data", dataGenerator(1)[0]);
     }, updateRate_MS);
   }
 );
