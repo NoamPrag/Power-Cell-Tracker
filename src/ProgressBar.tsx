@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import LinearProgress, {
   LinearProgressProps,
 } from "@material-ui/core/LinearProgress";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import { MuiThemeProvider, createMuiTheme, createStyles, withStyles, Theme } from "@material-ui/core/styles";
-
-
-
+import { createStyles, withStyles, Theme } from "@material-ui/core/styles";
 
 const BorderLinearProgress = withStyles((theme: Theme) =>
   createStyles({
@@ -16,20 +13,21 @@ const BorderLinearProgress = withStyles((theme: Theme) =>
       borderRadius: 3,
     },
     colorPrimary: {
-      backgroundColor: theme.palette.grey[theme.palette.type === 'light' ? 200 : 700],
+      backgroundColor:
+        theme.palette.grey[theme.palette.type === "light" ? 200 : 700],
     },
     bar: {
       borderRadius: 3,
       backgroundColor: "primary",
     },
-  }),
+  })
 )(LinearProgress);
 
 function LinearProgressWithLabel(
   props: LinearProgressProps & { value: number }
-  ) {
-    return (
-      <Box display="flex" alignItems="center">
+) {
+  return (
+    <Box display="flex" alignItems="center">
       <Box width="100%" mr={1}>
         <BorderLinearProgress variant="determinate" {...props} />
       </Box>
@@ -48,7 +46,7 @@ export default function LinearWithValueLabel(props: {
   height?: number;
   radius?: number;
 }) {
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(props.value);
 
   if (props.show) {
     setTimeout(() => {

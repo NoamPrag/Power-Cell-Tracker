@@ -1,39 +1,40 @@
-import { BurstData, Position, BurstCoordinates } from "./Burst";
+import { BurstData, Position } from "./Burst";
+import { accuracy, precision, inInnerPort } from "./Calculations";
 
 const getRandom = (): number => {
-  const randomValue = Math.random();
+  const randomValue: number = Math.random();
   return randomValue === 0 ? getRandom() : randomValue;
 };
 
 const normalDistribution = () => {
-  const u = getRandom();
-  const v = getRandom();
+  const u: number = getRandom();
+  const v: number = getRandom();
   return Math.sqrt(-4.0 * Math.log(u)) * Math.cos(1.0 * Math.PI * v);
 };
 
 const randomPosition = (): Position => ({
-  x: normalDistribution(),
-  y: normalDistribution(),
+  x: normalDistribution() * 11,
+  y: normalDistribution() * 11,
 });
 
 const burstGenerator = (burstNumber: number): BurstData => {
-  const array: BurstCoordinates = [
-    randomPosition(),
-    randomPosition(),
-    randomPosition(),
-    randomPosition(),
-    randomPosition(),
-  ];
+  const positions: Position[] = Array.from(Array(5).keys()).map(
+    (): Position => randomPosition()
+  );
   return {
     burstNumber,
-    burstCoordinates: array,
+    burstCoordinates: positions,
+
+    inInnerPort: positions.map((position: Position): boolean =>
+      inInnerPort(position)
+    ),
+
+    accuracy: accuracy(positions),
+    precision: precision(positions),
   };
 };
 
-export const dataGenerator = (bursts: number): BurstData[] => {
-  let burstArray: BurstData[] = [];
-  for (let i = 1; i <= bursts; i++) {
-    burstArray.push(burstGenerator(i));
-  }
-  return burstArray;
-};
+export const dataGenerator = (bursts: number): BurstData[] =>
+  Array.from(Array(bursts).keys()).map(
+    (i: number): BurstData => burstGenerator(i + 1)
+  );

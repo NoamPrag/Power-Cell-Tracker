@@ -90,9 +90,12 @@
     "@material-ui/icons": "^4.9.1",
     "@types/material-ui": "^0.21.8",
     "@types/react": "^16.9.53",
+    "@types/react-chartjs-2": "^2.5.7",
     "@types/react-dom": "^16.9.8",
+    "chart.js": "^2.9.4",
     "electron-squirrel-startup": "^1.0.0",
     "react": "^16.14.0",
+    "react-chartjs-2": "^2.11.1",
     "react-dom": "^16.14.0"
   }
 }

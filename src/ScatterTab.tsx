@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from "react";
-import Burst, { BurstData, Position } from "./Burst";
+import Burst, { BurstData } from "./Burst";
 import { Grid, Typography, Fab, Button } from "@material-ui/core";
-import Scatter from "./Scatter";
-import { accuracy, precision } from "./Calculations";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import ProgressBar from "./ProgressBar";
-import InvertColorsIcon from '@material-ui/icons/InvertColors';
-import InvertColorsOffIcon from '@material-ui/icons/InvertColorsOff';
+import InvertColorsIcon from "@material-ui/icons/InvertColors";
+import InvertColorsOffIcon from "@material-ui/icons/InvertColorsOff";
 import SaveIcon from "@material-ui/icons/Save";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 
+import ScatterChart from "./ScatterChart";
 
-
-export let colors = [
+let burstsColors: string[] = [
   "#2196f3",
   "#3568ca",
   "#3f51b5",
@@ -28,9 +26,9 @@ export let colors = [
   "#4caf50",
   "#3ea786",
   "#2f9ebd",
-];
+].sort((): number => Math.random() - 0.5); // Shuffling array
 
-// export const colors2 = [
+// const colors2 = [
 //   "#3f51b5",
 //   "#f50057",
 //   "#f44336",
@@ -39,134 +37,125 @@ export let colors = [
 //   "#4caf50",
 // ];
 
-function useForceUpdate() {
-  const [value, setValue] = useState(0);
-  return () => setValue((value) => value + 1);
-}
-
 const THEME = createMuiTheme({
   typography: {
     fontFamily: `"Poppins", sans-serif`,
   },
 });
 
+const useForceUpdate = (): (() => void) => {
+  const [value, setValue] = useState(0);
+  return (): void => setValue(value + 1);
+};
 
 interface ScatterTabProps {
   data: BurstData[];
-  setData: (data: (BurstData[] | ((func: BurstData[]) => BurstData[]))) => void;
+  setData: (data: BurstData[] | ((func: BurstData[]) => BurstData[])) => void;
+  totalAccuracy: number;
+  totalPrecision: number;
 }
 
+const ScatterTab = (props: ScatterTabProps): JSX.Element => {
+  const [showColors, setShowColors] = useState(false); // set to true on component render
 
-const ScatterTab = (props: ScatterTabProps) => {
+  const [openedBursts, setOpenedBursts] = useState<boolean[]>(
+    props.data.map((_): false => false)
+  );
 
-
-  const allPositions: Position[] = props.data.reduce((acc: Position[], curr: BurstData): Position[] => [...acc, ...curr.burstCoordinates], []);
-
-  const totalPrecision: number = precision(allPositions);
-  const totalAccuracy: number = accuracy(allPositions);
-
-  const [showColors, setShowColors] = useState(true);
-
-  useEffect(() => {
-    // Shuffle the colors array (bubble shuffle)
-    for (let i = 0; i < Math.pow(colors.length, 2); i++) {
-      colors.sort((a, b) => Math.random() - 0.5);
-    }
-    
-    props.setData((curr: BurstData[]): BurstData[] =>
-      curr.map((item: BurstData, index: number) => {
-        let itemCopy: BurstData = item;
-        itemCopy.color = colors[index];
-        return itemCopy;
-      })
-    );
+  useEffect((): void => {
+    burstsColors.sort((): number => Math.random() - 0.5); // Shuffling array
+    setShowColors(true);
   }, []);
 
-  const switchColors = () => {
-    setShowColors((val) => !val);
-
-    props.setData((curr: BurstData[]): BurstData[] =>
-      curr.map((item: BurstData, index: number) => {
-        let itemCopy: BurstData = item;
-        itemCopy.color = !showColors ? colors[index] : "grey";
-        return itemCopy;
-      })
-    );
-  };
-
-  const forceUpdate = useForceUpdate();
-
-  const openBurst = (burstNumber: number) => {
-    if (!showColors) {
-      const dataCopy = props.data;
-      dataCopy[burstNumber].color = colors[burstNumber];
-      props.setData(dataCopy);
-      forceUpdate();
-    }
-  };
-
-  const closeBurst = (burstNumber: number) => {
-    if (!showColors) {
-      const dataCopy = props.data;
-      dataCopy[burstNumber].color = "grey";
-      props.setData(dataCopy);
-      forceUpdate();
-    }
-  };
+  const forceUpdate: () => void = useForceUpdate();
 
   return (
-    <div>
+    <>
       <MuiThemeProvider theme={THEME}>
         <Grid
           container
           style={{
             position: "fixed",
             width: "95vw",
-            height: "85vh",
+            height: "75vh",
             left: "3vw",
             top: 100,
+            display: "flex",
           }}
         >
           <Grid item xs={9}>
-            <Scatter data={props.data} />
+            <ScatterChart
+              data={props.data}
+              colors={props.data.map(
+                (burst: BurstData, index: number): string =>
+                  showColors || openedBursts[index]
+                    ? burstsColors[index % burstsColors.length]
+                    : "#e5e5e5"
+              )}
+            />
           </Grid>
-          <Grid item xs={3} style={{ height: 650, overflowY: "scroll"}}>
-            {/* TODO: add border? */}
-              {props.data.map((value, index) => (
+
+          <Grid item xs={3} style={{ height: 650, overflowY: "scroll" }}>
+            {props.data.map(
+              (value: BurstData, index: number): JSX.Element => (
                 <Burst
                   burst={value}
+                  color={
+                    showColors || openedBursts[index]
+                      ? burstsColors[index % burstsColors.length]
+                      : "grey"
+                  }
                   key={index}
-                  open={() => openBurst(index)}
-                  close={() => closeBurst(index)}
+                  changeOpen={(): void => {
+                    setOpenedBursts((prev: boolean[]): boolean[] => {
+                      prev[index] = !prev[index];
+                      return prev;
+                    });
+
+                    if (!showColors) {
+                      forceUpdate();
+                    }
+                  }}
                 />
-              ))}
+              )
+            )}
           </Grid>
 
-          <Grid item container spacing={5} xs={12} alignItems="center">
-
-            <Grid item xs={1} style={{marginRight: -20}}>
-              <Fab color={showColors ? "secondary" : "default"} aria-label="edit" onClick={() => switchColors()}>
-                  {showColors ?  <InvertColorsIcon/> : <InvertColorsOffIcon/>}
+          <Grid
+            item
+            container
+            spacing={5}
+            xs={12}
+            alignItems="center"
+            style={{ marginTop: 25 }}
+          >
+            <Grid item xs={1} style={{ marginRight: -20 }}>
+              <Fab
+                color={showColors ? "secondary" : "default"}
+                aria-label="edit"
+                onClick={() => setShowColors((val: boolean): boolean => !val)}
+              >
+                {showColors ? <InvertColorsIcon /> : <InvertColorsOffIcon />}
               </Fab>
             </Grid>
 
             <Grid item xs={4}>
               <Typography variant="h5">Total Precision:</Typography>
-              <ProgressBar value={totalPrecision} show={true} />
+              <ProgressBar value={props.totalPrecision} show={true} />
             </Grid>
 
             <Grid item xs={4}>
-            <Typography variant="h5">Total Accuracy:</Typography>
-              <ProgressBar value={totalAccuracy} show={true} />
+              <Typography variant="h5">Total Accuracy:</Typography>
+              <ProgressBar value={props.totalAccuracy} show={true} />
             </Grid>
 
-            <Grid item xs={1} style={{marginLeft: 70, marginRight: 30}}>
+            <Grid item xs={1} style={{ marginLeft: 70, marginRight: 30 }}>
               <Button
                 variant="contained"
                 color="primary"
                 size="large"
                 startIcon={<CloudUploadIcon />}
-                >     
+              >
                 Upload
               </Button>
             </Grid>
@@ -177,15 +166,14 @@ const ScatterTab = (props: ScatterTabProps) => {
                 color="primary"
                 size="large"
                 startIcon={<SaveIcon />}
-                >
+              >
                 Export
               </Button>
             </Grid>
-
           </Grid>
-      </Grid>
+        </Grid>
       </MuiThemeProvider>
-    </div>
+    </>
   );
 };
 
