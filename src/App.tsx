@@ -17,7 +17,12 @@ const App = (): JSX.Element => {
   const [totalAccuracy, setTotalAccuracy] = useState<number>(0);
   const [totalPrecision, setTotalPrecision] = useState<number>(0);
 
+  // update accuracy and precision according to data
   useEffect(() => {
+    if (data.length <= 0) {
+      return;
+    }
+
     const allPositions: Position[] = data.reduce(
       (acc: Position[], curr: BurstData): Position[] => [
         ...acc,
@@ -29,6 +34,7 @@ const App = (): JSX.Element => {
     setTotalPrecision(precision(allPositions));
   }, [data]);
 
+  // set data on every arduino message
   useEffect((): void => {
     ipcRenderer.on(
       "Arduino-Data",

@@ -4,6 +4,55 @@ import { BurstData, Position } from "./Burst";
 import { accuracy, precision, inInnerPort } from "./Calculations";
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
+// Arduino Communications:
+
+// const SerialPort: any = require('serialport');
+// const Readline: any = require('@serialport/parser-readline');
+
+// let newBurstCoords: Position[] = [];
+
+// // TODO: Add serialport types.
+// const getArduinoPort = async (): Promise<string> => {
+//   const ports: any = await SerialPort.list();
+//   const arduinoPort: any = ports.filter((port: any): boolean => port.manufacturer.includes("Arduino"))[0];
+//   return arduinoPort.path;
+// };
+
+// ipcMain.on("Start-Arduino-Communication", (event, arg) => {
+//   getArduinoPort().then((portPath: string) => {
+//     const port: any = new SerialPort(portPath, {
+//       baudRate: 9600
+//     });
+
+//     const parser: any = new Readline();
+//     port.pipe(parser);
+
+//     parser.on('data', (data: any) => {
+//       const [x, y] = data.split(",").slice(1, 3).map(parseFloat);
+//       const newPosition: Position = { x, y };
+
+//       newBurstCoords.push(newPosition);
+
+//       console.log(data);
+
+//       if(newBurstCoords.length >= 5) {
+//         event.reply("Arduino-Data", {
+//           burstNumber: null,
+//           burstCoordinates: newBurstCoords,
+
+//           inInnerPort: newBurstCoords.map((position: Position): boolean => inInnerPort(position)),
+
+//           accuracy: accuracy(newBurstCoords),
+//           precision: precision(newBurstCoords),
+//         });
+
+//         newBurstCoords = [];
+//       }
+
+//     });
+//   }).catch(console.log);
+// });
+
 const updateRate_MS: number = 60000;
 
 ipcMain.on(
