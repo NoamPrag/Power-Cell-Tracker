@@ -56,7 +56,7 @@ interface ScatterTabProps {
 }
 
 const ScatterTab = (props: ScatterTabProps): JSX.Element => {
-  const [showColors, setShowColors] = useState(false);
+  const [showColors, setShowColors] = useState(false); // set to true on component render
 
   const [openedBursts, setOpenedBursts] = useState<boolean[]>(
     props.data.map((_): false => false)
@@ -64,6 +64,7 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
 
   useEffect((): void => {
     burstsColors.sort((): number => Math.random() - 0.5); // Shuffling array
+    setShowColors(true);
   }, []);
 
   const forceUpdate: () => void = useForceUpdate();
@@ -85,9 +86,9 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
           <Grid item xs={9}>
             <ScatterChart
               data={props.data}
-              colors={openedBursts.map(
-                (opened: boolean, index: number): string =>
-                  showColors || opened
+              colors={props.data.map(
+                (burst: BurstData, index: number): string =>
+                  showColors || openedBursts[index]
                     ? burstsColors[index % burstsColors.length]
                     : "#e5e5e5"
               )}
@@ -111,7 +112,9 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
                       return prev;
                     });
 
-                    forceUpdate();
+                    if (!showColors) {
+                      forceUpdate();
+                    }
                   }}
                 />
               )

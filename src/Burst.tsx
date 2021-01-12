@@ -56,7 +56,10 @@ const Burst = (props: {
               props.changeOpen();
             }}
           >
-            <Typography variant="h5" style={{ color: props.color }}>
+            <Typography
+              variant="h5"
+              style={{ color: props.color, transitionDuration: "0.7s" }}
+            >
               Burst #{props.burst.burstNumber}
             </Typography>
           </AccordionSummary>
