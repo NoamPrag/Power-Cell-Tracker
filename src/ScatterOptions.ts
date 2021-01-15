@@ -72,7 +72,7 @@ export const options: {} = {
         data: any
       ) => {
         return ` <b> Burst: ${tooltipItem.datasetIndex + 1}   Ball: ${
-          tooltipItem.index
+          tooltipItem.index + 1
         }  </b> <br/>
         (${tooltipItem.xLabel.toFixed(2)}, ${tooltipItem.yLabel.toFixed(2)})`;
       },
