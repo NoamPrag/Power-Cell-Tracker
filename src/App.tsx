@@ -5,11 +5,12 @@ import { dataGenerator } from "./DataGenerator";
 import { BurstData, Position } from "./Burst";
 import { accuracy, precision } from "./calculations";
 
-import { Snackbar, Slide } from "@material-ui/core";
+import { Snackbar } from "@material-ui/core";
 
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 
 import { ipcRenderer } from "electron";
+import { ArduinoMsg } from "./index";
 
 export type Tab = "Scatter" | "Arduino" | "Stats";
 
@@ -25,7 +26,18 @@ const App = (): JSX.Element => {
   const [totalAccuracy, setTotalAccuracy] = useState<number>(0);
   const [totalPrecision, setTotalPrecision] = useState<number>(0);
 
-  const [alertOpened, setAlertOpened] = useState(true);
+  const [alertStatus, setAlertStatus] = useState<{
+    opened: boolean;
+    pin: number;
+  }>({ opened: false, pin: null });
+
+  const openAlert = (pin: number) => setAlertStatus({ opened: true, pin });
+  const closeAlert = (_: any, reason?: string) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setAlertStatus({ ...alertStatus, opened: false });
+  };
 
   // update accuracy and precision according to data
   useEffect(() => {
@@ -48,13 +60,15 @@ const App = (): JSX.Element => {
   useEffect((): void => {
     ipcRenderer.on(
       "Arduino-Data",
-      (_event: Electron.IpcRendererEvent, newBurst: BurstData): void => {
+      (_event: Electron.IpcRendererEvent, message: ArduinoMsg): void => {
         setData((prevData: BurstData[]): BurstData[] => {
-          newBurst.burstNumber = prevData.length + 1;
-          return [...prevData, newBurst];
+          message.burst.burstNumber = prevData.length + 1;
+          return [...prevData, message.burst];
         });
 
-        setAlertOpened(true);
+        if (message.errorCode !== 0) {
+          openAlert(message.errorCode);
+        }
       }
     );
   }, []);
@@ -87,22 +101,13 @@ const App = (): JSX.Element => {
       )}
 
       <Snackbar
-        open={alertOpened}
+        open={alertStatus.opened}
         autoHideDuration={5000}
-        onClose={(): void => {
-          console.log("Closed! :)");
-          setAlertOpened(false);
-        }}
+        onClose={closeAlert}
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
       >
-        <Alert
-          onClose={(): void => {
-            console.log("Closed! :)");
-            setAlertOpened(false);
-          }}
-          severity="error"
-        >
-          Arduino Error: pin #{12 /* insert real pin */}
+        <Alert onClose={closeAlert} severity="error">
+          Arduino Error: pin #{alertStatus.pin}
         </Alert>
       </Snackbar>
     </>

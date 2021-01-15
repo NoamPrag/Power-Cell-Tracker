@@ -4,6 +4,43 @@ import { BurstData, Position } from "./Burst";
 import { accuracy, precision, inInnerPort } from "./Calculations";
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
+export interface ArduinoMsg {
+  burst: BurstData;
+  errorCode: number;
+}
+
+const updateRate_MS: number = 10000;
+
+ipcMain.on(
+  "Start-Arduino-Communication",
+  (event: Electron.IpcMainEvent): void => {
+    setInterval((): void => {
+      const coordinates: Position[] = dataGenerator(1)[0].burstCoordinates;
+
+      const newBurst: BurstData = {
+        burstNumber: null,
+        burstCoordinates: coordinates,
+
+        inInnerPort: coordinates.map((position: Position): boolean =>
+          inInnerPort(position)
+        ),
+
+        accuracy: accuracy(coordinates),
+        precision: precision(coordinates),
+      };
+
+      const reply: ArduinoMsg = {
+        burst: newBurst,
+        errorCode: parseInt((Math.random() * 39 + 1).toFixed(0)), // whole number in range 0-40
+      };
+
+      event.reply("Arduino-Data", reply);
+    }, updateRate_MS);
+  }
+);
+
+// TODO: make ArduinoTestData interface
+
 // Arduino Communications:
 
 // const SerialPort: any = require('serialport');
@@ -52,35 +89,6 @@ declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 //     });
 //   }).catch(console.log);
 // });
-
-const updateRate_MS: number = 60000;
-
-ipcMain.on(
-  "Start-Arduino-Communication",
-  (event: Electron.IpcMainEvent): void => {
-    setInterval((): void => {
-      const coordinates: Position[] = dataGenerator(1)[0].burstCoordinates;
-
-      const scaledCoordinates: Position[] = coordinates.map(
-        (pos: Position): Position => ({ x: pos.x, y: pos.y })
-      );
-
-      const newBurst: BurstData = {
-        burstNumber: null,
-        burstCoordinates: scaledCoordinates,
-
-        inInnerPort: scaledCoordinates.map((position: Position): boolean =>
-          inInnerPort(position)
-        ),
-
-        accuracy: accuracy(scaledCoordinates),
-        precision: precision(scaledCoordinates),
-      };
-
-      event.reply("Arduino-Data", dataGenerator(1)[0]);
-    }, updateRate_MS);
-  }
-);
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
