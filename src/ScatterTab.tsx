@@ -127,7 +127,7 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
             spacing={5}
             xs={12}
             alignItems="center"
-            style={{ marginTop: 25 }}
+            style={{ marginTop: -10 }}
           >
             <Grid item xs={1} style={{ marginRight: -20 }}>
               <Fab

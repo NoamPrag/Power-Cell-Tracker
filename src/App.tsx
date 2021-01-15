@@ -5,17 +5,27 @@ import { dataGenerator } from "./DataGenerator";
 import { BurstData, Position } from "./Burst";
 import { accuracy, precision } from "./calculations";
 
+import { Snackbar, Slide } from "@material-ui/core";
+
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
+
 import { ipcRenderer } from "electron";
 
 export type Tab = "Scatter" | "Arduino" | "Stats";
 
 ipcRenderer.send("Start-Arduino-Communication", null);
 
+const Alert = (props: AlertProps): JSX.Element => (
+  <MuiAlert elevation={6} variant="filled" {...props} />
+);
+
 const App = (): JSX.Element => {
   const [data, setData] = useState<BurstData[]>(dataGenerator(6));
 
   const [totalAccuracy, setTotalAccuracy] = useState<number>(0);
   const [totalPrecision, setTotalPrecision] = useState<number>(0);
+
+  const [alertOpened, setAlertOpened] = useState(true);
 
   // update accuracy and precision according to data
   useEffect(() => {
@@ -43,11 +53,13 @@ const App = (): JSX.Element => {
           newBurst.burstNumber = prevData.length + 1;
           return [...prevData, newBurst];
         });
+
+        setAlertOpened(true);
       }
     );
   }, []);
 
-  const [tab, setTab] = useState<Tab>("Arduino");
+  const [tab, setTab] = useState<Tab>("Scatter");
 
   return (
     <>
@@ -73,6 +85,26 @@ const App = (): JSX.Element => {
       {tab === "Stats" && (
         <h1 style={{ position: "absolute", top: 100, left: 50 }}>Stats Tab</h1>
       )}
+
+      <Snackbar
+        open={alertOpened}
+        autoHideDuration={5000}
+        onClose={(): void => {
+          console.log("Closed! :)");
+          setAlertOpened(false);
+        }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+      >
+        <Alert
+          onClose={(): void => {
+            console.log("Closed! :)");
+            setAlertOpened(false);
+          }}
+          severity="error"
+        >
+          Arduino Error: pin #{12 /* insert real pin */}
+        </Alert>
+      </Snackbar>
     </>
   );
 };
