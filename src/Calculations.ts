@@ -50,26 +50,21 @@ const standardDeviation = (
   );
 };
 
-// const sigmoid = (l: number, k: number, x0: number, value: number): number =>
-//   l / (1 + Math.pow(Math.E, -k * (value - x0)));
-
 const sigmoid = (l: number, k: number, x0: number, value: number): number =>
   l / (1 + Math.exp(-k * (value - x0)));
 
-// export const accuracy = (coordinates: Position[]): number =>
-//   100 * (1 - sigmoid(0.5, 4, 1, averageDistance(coordinates, zeroPosition)));
 export const accuracy = (coordinates: Position[]): number =>
-  averageDistance(coordinates, zeroPosition);
+  100 * (1 - sigmoid(1, 0.5, 20, averageDistance(coordinates, zeroPosition)));
 
 export const precision = (coordinates: Position[]): number =>
   100 *
   (1 -
     sigmoid(
-      1.2,
-      4,
       1,
+      0.005,
+      650,
       standardDeviation(coordinates, averagePoint(coordinates))
     ));
 
 export const inInnerPort = (position: Position): boolean =>
-  getDistance(position, zeroPosition) < 10;
+  getDistance(position, zeroPosition) < 25;
