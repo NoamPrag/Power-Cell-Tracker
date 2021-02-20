@@ -61,19 +61,20 @@ ipcMain.on("Start-Arduino-Communication", (event, arg) => {
   getArduinoPort()
     .then((portPath: string) => {
       const port: any = new SerialPort(portPath, {
-        baudRate: 9600,
+        baudRate: 115200,
       });
 
       const parser: any = new Readline();
       port.pipe(parser);
 
       parser.on("data", (data: any) => {
-        const [x, y] = data.split(",").slice(1, 3).map(parseFloat);
+        const [x, y] = data.split(",").slice(0, 3).map(parseFloat);
         const newPosition: Position = { x, y };
 
         newBurstCoords.push(newPosition);
 
-        console.log(data);
+        console.log({ x, y });
+
 
         if (newBurstCoords.length >= 5) {
           event.reply("Arduino-Data", {
