@@ -21,7 +21,7 @@ const Alert = (props: AlertProps): JSX.Element => (
 );
 
 const App = (): JSX.Element => {
-  const [data, setData] = useState<BurstData[]>(dataGenerator(6));
+  const [data, setData] = useState<BurstData[]>(dataGenerator(0));
 
   const [totalAccuracy, setTotalAccuracy] = useState<number>(0);
   const [totalPrecision, setTotalPrecision] = useState<number>(0);
@@ -84,7 +84,7 @@ const App = (): JSX.Element => {
         />
       )}
 
-      {tab === "Arduino" && (
+      {/* {tab === "Arduino" && (
         <h1 style={{ position: "absolute", top: 100, left: 50 }}>
           Arduino Tab
         </h1>
@@ -92,7 +92,7 @@ const App = (): JSX.Element => {
 
       {tab === "Stats" && (
         <h1 style={{ position: "absolute", top: 100, left: 50 }}>Stats Tab</h1>
-      )}
+      )} */}
 
       <Snackbar
         open={alertStatus.opened}
