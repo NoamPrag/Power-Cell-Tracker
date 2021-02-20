@@ -32,18 +32,14 @@ const App = (): JSX.Element => {
   }>({ opened: false, pin: null });
 
   const openAlert = (pin: number) => setAlertStatus({ opened: true, pin });
-  const closeAlert = (_: any, reason?: string) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setAlertStatus({ ...alertStatus, opened: false });
+  const closeAlert = (_: any, reason?: string): void => {
+    if (reason !== "clickaway")
+      setAlertStatus({ ...alertStatus, opened: false });
   };
 
   // update accuracy and precision according to data
   useEffect(() => {
-    if (data.length <= 0) {
-      return;
-    }
+    if (data.length <= 0) return;
 
     const allPositions: Position[] = data.reduce(
       (acc: Position[], curr: BurstData): Position[] => [
@@ -61,14 +57,12 @@ const App = (): JSX.Element => {
     ipcRenderer.on(
       "Arduino-Data",
       (_event: Electron.IpcRendererEvent, message: ArduinoMsg): void => {
-        setData((prevData: BurstData[]): BurstData[] => {
-          message.burst.burstNumber = prevData.length + 1;
-          return [...prevData, message.burst];
-        });
+        setData((prevData: BurstData[]): BurstData[] => [
+          ...prevData,
+          { ...message.burst, burstNumber: prevData.length + 1 },
+        ]);
 
-        if (message.errorCode !== 0) {
-          openAlert(message.errorCode);
-        }
+        if (message.errorCode !== 0) openAlert(message.errorCode);
       }
     );
   }, []);
