@@ -155,7 +155,7 @@ export const options: {} = {
       tooltipEl.style.left =
         position.left + window.pageXOffset + tooltipModel.caretX - 55 + "px";
       tooltipEl.style.top =
-        position.top + window.pageYOffset + tooltipModel.caretY - 50 + "px";
+        position.top + window.pageYOffset + tooltipModel.caretY - 60 + "px";
       tooltipEl.style.fontFamily = tooltipModel._bodyFontFamily;
       tooltipEl.style.fontSize = tooltipModel.bodyFontSize + "px";
       tooltipEl.style.fontStyle = tooltipModel._bodyFontStyle;

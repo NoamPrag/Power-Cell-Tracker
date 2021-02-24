@@ -12,8 +12,8 @@ interface ScatterProps {
 const ScatterChart = (props: ScatterProps): JSX.Element => {
   const datasets: {}[] = props.data.map(
     (burst: BurstData, index: number): {} => ({
-      pointRadius: 7,
-      hoverRadius: 10,
+      pointRadius: 10,
+      hoverRadius: 14,
       label: `Burst #${burst.burstNumber}`,
       data: burst.burstCoordinates,
       backgroundColor: props.colors[index],
