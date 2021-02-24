@@ -9,95 +9,95 @@ export interface ArduinoMsg {
   errorCode: number;
 }
 
-// const updateRate_MS: number = 20000;
+const updateRate_MS: number = 20000;
 
-// ipcMain.on(
-//   "Start-Arduino-Communication",
-//   (event: Electron.IpcMainEvent): void => {
-//     setInterval((): void => {
-//       const coordinates: Position[] = dataGenerator(1)[0].burstCoordinates;
+ipcMain.on(
+  "Start-Arduino-Communication",
+  (event: Electron.IpcMainEvent): void => {
+    setInterval((): void => {
+      const coordinates: Position[] = dataGenerator(1)[0].burstCoordinates;
 
-//       const newBurst: BurstData = {
-//         burstNumber: null,
-//         burstCoordinates: coordinates,
+      const newBurst: BurstData = {
+        burstNumber: null,
+        burstCoordinates: coordinates,
 
-//         inInnerPort: coordinates.map((position: Position): boolean =>
-//           inInnerPort(position)
-//         ),
+        inInnerPort: coordinates.map((position: Position): boolean =>
+          inInnerPort(position)
+        ),
 
-//         accuracy: accuracy(coordinates),
-//         precision: precision(coordinates),
-//       };
+        accuracy: accuracy(coordinates),
+        precision: precision(coordinates),
+      };
 
-//       const reply: ArduinoMsg = {
-//         burst: newBurst,
-//         errorCode: parseInt((Math.random() * 39 + 1).toFixed(0)), // whole number in range 0-40
-//       };
+      const reply: ArduinoMsg = {
+        burst: newBurst,
+        errorCode: parseInt((Math.random() * 39 + 1).toFixed(0)), // whole number in range 0-40
+      };
 
-//       event.reply("Arduino-Data", reply);
-//     }, updateRate_MS);
-//   }
-// );
+      event.reply("Arduino-Data", reply);
+    }, updateRate_MS);
+  }
+);
 
 // TODO: make ArduinoTestData interface
 
 // Arduino Communications:
 
-const SerialPort: any = require("serialport");
-const Readline: any = require("@serialport/parser-readline");
+// const SerialPort: any = require("serialport");
+// const Readline: any = require("@serialport/parser-readline");
 
-let newBurstCoords: Position[] = [];
+// let newBurstCoords: Position[] = [];
 
-// TODO: Add serialport types.
-const getArduinoPort = async (): Promise<string> => {
-  const ports: any = await SerialPort.list();
-  const arduinoPort: any = ports.filter((port: any): boolean =>
-    port.manufacturer.includes("Arduino")
-  )[0];
-  return arduinoPort.path;
-};
+// // TODO: Add serialport types.
+// const getArduinoPort = async (): Promise<string> => {
+//   const ports: any = await SerialPort.list();
+//   const arduinoPort: any = ports.filter((port: any): boolean =>
+//     port.manufacturer.includes("Arduino")
+//   )[0];
+//   return arduinoPort.path;
+// };
 
-ipcMain.on("Start-Arduino-Communication", (event, arg) => {
-  getArduinoPort()
-    .then((portPath: string) => {
-      const port: any = new SerialPort(portPath, {
-        baudRate: 115200,
-      });
+// ipcMain.on("Start-Arduino-Communication", (event, arg) => {
+//   getArduinoPort()
+//     .then((portPath: string) => {
+//       const port: any = new SerialPort(portPath, {
+//         baudRate: 115200,
+//       });
 
-      const parser: any = new Readline();
-      port.pipe(parser);
+//       const parser: any = new Readline();
+//       port.pipe(parser);
 
-      parser.on("data", (data: any) => {
-        const [x, y] = data.split(",").slice(0, 3).map(parseFloat);
-        const newPosition: Position = { x, y };
+//       parser.on("data", (data: any) => {
+//         const [x, y] = data.split(",").slice(0, 3).map(parseFloat);
+//         const newPosition: Position = { x, y };
 
-        newBurstCoords.push(newPosition);
+//         newBurstCoords.push(newPosition);
 
-        console.log({ x, y });
+//         console.log({ x, y });
 
 
-        if (newBurstCoords.length >= 5) {
-          event.reply("Arduino-Data", {
-            burst: {
-              burstNumber: null,
-              burstCoordinates: newBurstCoords,
+//         if (newBurstCoords.length >= 5) {
+//           event.reply("Arduino-Data", {
+//             burst: {
+//               burstNumber: null,
+//               burstCoordinates: newBurstCoords,
 
-              inInnerPort: newBurstCoords.map((position: Position): boolean =>
-                inInnerPort(position)
-              ),
+//               inInnerPort: newBurstCoords.map((position: Position): boolean =>
+//                 inInnerPort(position)
+//               ),
 
-              accuracy: accuracy(newBurstCoords),
-              precision: precision(newBurstCoords),
-            },
-            errorCode: 0,
-          });
+//               accuracy: accuracy(newBurstCoords),
+//               precision: precision(newBurstCoords),
+//             },
+//             errorCode: 0,
+//           });
 
-          newBurstCoords = [];
-        }
-      });
-    })
-    .catch(console.log);
-});
+//           newBurstCoords = [];
+//         }
+//       });
+//     })
+//     .catch(console.log);
+// });
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {

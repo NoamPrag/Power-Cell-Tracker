@@ -7,7 +7,6 @@ import InvertColorsIcon from "@material-ui/icons/InvertColors";
 import InvertColorsOffIcon from "@material-ui/icons/InvertColorsOff";
 import SaveIcon from "@material-ui/icons/Save";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
-
 import ScatterChart from "./ScatterChart";
 
 let burstsColors: string[] = [
@@ -68,6 +67,11 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
   }, []);
 
   const forceUpdate: () => void = useForceUpdate();
+
+  const clearData = () => {
+    props.data.length = 0;
+    console.log("CLEAR");
+  };
 
   return (
     <>
@@ -155,8 +159,9 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
                 color="primary"
                 size="large"
                 startIcon={<CloudUploadIcon />}
+                onClick={clearData}
               >
-                Upload
+                Clear
               </Button>
             </Grid>
 
