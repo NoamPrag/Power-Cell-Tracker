@@ -71,8 +71,9 @@ export const options: {} = {
         },
         data: any
       ) => {
-        return ` <b> Burst: ${tooltipItem.datasetIndex + 1}   Ball: ${tooltipItem.index + 1
-          }  </b> <br/>
+        return ` <b> Burst: ${tooltipItem.datasetIndex + 1}   Ball: ${
+          tooltipItem.index + 1
+        }  </b> <br/>
         (${tooltipItem.xLabel.toFixed(2)}, ${tooltipItem.yLabel.toFixed(2)})`;
       },
     },
@@ -155,7 +156,7 @@ export const options: {} = {
       tooltipEl.style.left =
         position.left + window.pageXOffset + tooltipModel.caretX - 55 + "px";
       tooltipEl.style.top =
-        position.top + window.pageYOffset + tooltipModel.caretY - 50 + "px";
+        position.top + window.pageYOffset + tooltipModel.caretY - 60 + "px";
       tooltipEl.style.fontFamily = tooltipModel._bodyFontFamily;
       tooltipEl.style.fontSize = tooltipModel.bodyFontSize + "px";
       tooltipEl.style.fontStyle = tooltipModel._bodyFontStyle;
