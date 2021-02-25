@@ -6,7 +6,7 @@ import ProgressBar from "./ProgressBar";
 import InvertColorsIcon from "@material-ui/icons/InvertColors";
 import InvertColorsOffIcon from "@material-ui/icons/InvertColorsOff";
 import SaveIcon from "@material-ui/icons/Save";
-import CloudUploadIcon from "@material-ui/icons/CloudUpload";
+import ClearAll from "@material-ui/icons/ClearAll";
 
 import ScatterChart from "./ScatterChart";
 
@@ -68,6 +68,11 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
   }, []);
 
   const forceUpdate: () => void = useForceUpdate();
+
+  const clearData = () => {
+    props.setData([]);
+    console.log("Data Cleared! :)");
+  };
 
   return (
     <>
@@ -154,9 +159,10 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
                 variant="contained"
                 color="primary"
                 size="large"
-                startIcon={<CloudUploadIcon />}
+                startIcon={<ClearAll />}
+                onClick={clearData}
               >
-                Upload
+                Clear
               </Button>
             </Grid>
 
