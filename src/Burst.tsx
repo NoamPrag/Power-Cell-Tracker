@@ -11,7 +11,6 @@ import SportsSoccerIcon from "@material-ui/icons/SportsSoccer";
 import GpsFixedIcon from "@material-ui/icons/GpsFixed";
 import GrainIcon from "@material-ui/icons/Grain";
 import ProgressBar from "./ProgressBar";
-import { getDistance, zeroPosition } from "./Calculations";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { green } from "@material-ui/core/colors";
 
