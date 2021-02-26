@@ -1,5 +1,4 @@
 import { app, BrowserWindow, ipcMain } from "electron";
-import { dataGenerator } from "./DataGenerator";
 import { BurstData, Position } from "./Burst";
 import { accuracy, precision, inInnerPort } from "./Calculations";
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
