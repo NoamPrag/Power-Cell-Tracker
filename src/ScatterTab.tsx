@@ -70,7 +70,7 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
   const forceUpdate: () => void = useForceUpdate();
 
   const clearData = () => {
-    props.data.length = 0;
+    props.setData([]);
     console.log("CLEAR");
   };
 
