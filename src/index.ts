@@ -9,36 +9,6 @@ export interface ArduinoMsg {
   errorCode: number;
 }
 
-// const updateRate_MS: number = 20000;
-
-// ipcMain.on(
-//   "Start-Arduino-Communication",
-//   (event: Electron.IpcMainEvent): void => {
-//     setInterval((): void => {
-//       const coordinates: Position[] = dataGenerator(1)[0].burstCoordinates;
-
-//       const newBurst: BurstData = {
-//         burstNumber: null,
-//         burstCoordinates: coordinates,
-
-//         inInnerPort: coordinates.map((position: Position): boolean =>
-//           inInnerPort(position)
-//         ),
-
-//         accuracy: accuracy(coordinates),
-//         precision: precision(coordinates),
-//       };
-
-//       const reply: ArduinoMsg = {
-//         burst: newBurst,
-//         errorCode: parseInt((Math.random() * 39 + 1).toFixed(0)), // whole number in range 0-40
-//       };
-
-//       event.reply("Arduino-Data", reply);
-//     }, updateRate_MS);
-//   }
-// );
-
 // TODO: make ArduinoTestData interface
 
 // Arduino Communications:
@@ -74,7 +44,6 @@ ipcMain.on("Start-Arduino-Communication", (event, arg) => {
         newBurstCoords.push(newPosition);
 
         console.log({ x, y });
-
 
         if (newBurstCoords.length >= 5) {
           event.reply("Arduino-Data", {
