@@ -6,7 +6,6 @@ import ProgressBar from "./ProgressBar";
 import InvertColorsIcon from "@material-ui/icons/InvertColors";
 import InvertColorsOffIcon from "@material-ui/icons/InvertColorsOff";
 import SaveIcon from "@material-ui/icons/Save";
-import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import ClearAll from "@material-ui/icons/ClearAll";
 import ScatterChart from "./ScatterChart";
 
