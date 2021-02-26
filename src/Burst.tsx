@@ -5,6 +5,7 @@ import {
   AccordionDetails,
   Container,
   Typography,
+  Grid,
 } from "@material-ui/core";
 import { ExpandMore } from "@material-ui/icons";
 import SportsSoccerIcon from "@material-ui/icons/SportsSoccer";
@@ -88,10 +89,49 @@ const Burst = (props: {
                 padding: "0 10px",
               }}
             >
-              <GpsFixedIcon />
-              <ProgressBar value={props.burst.accuracy} show={opened} />
+              <Grid container spacing={3}>
+                <Grid item xs={1}>
+                  <GpsFixedIcon />
+                  {/* <ProgressBar value={props.burst.accuracy} show={opened} /> */}
+                </Grid>
+                <Grid item xs={5}>
+                  <Typography>
+                    {Math.round(props.burst.precision * 100) / 100}cm
+                  </Typography>
+                </Grid>
+                <Grid item xs={1}>
+                  <GrainIcon />
+                  {/* <ProgressBar value={props.burst.precision} show={opened} /> */}
+                </Grid>
+                <Grid item xs={5}>
+                  <Typography>
+                    {Math.round(props.burst.precision * 100) / 100}cm
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} alignItems={"center"}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      width: "95%",
+                      padding: "0 10px",
+                    }}
+                  >
+                    {props.burst.inInnerPort.map(
+                      (inInnerPort: boolean, index: number): JSX.Element => (
+                        <SportsSoccerIcon
+                          key={index}
+                          fontSize="large"
+                          color={inInnerPort ? "secondary" : "primary"}
+                        />
+                      )
+                    )}
+                  </div>
+                </Grid>
+              </Grid>
             </div>
-            <div
+            {/* <div
               style={{
                 display: "flex",
                 flexDirection: "row",
@@ -99,26 +139,7 @@ const Burst = (props: {
                 width: "95%",
                 padding: "0 10px",
               }}
-            >
-              <GrainIcon />
-              <ProgressBar value={props.burst.precision} show={opened} />
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-              }}
-            >
-              {props.burst.inInnerPort.map(
-                (inInnerPort: boolean, index: number): JSX.Element => (
-                  <SportsSoccerIcon
-                    key={index}
-                    fontSize="large"
-                    color={inInnerPort ? "secondary" : "primary"}
-                  />
-                )
-              )}
-            </div>
+            ></div> */}
           </div>
         </AccordionDetails>
       </Accordion>
