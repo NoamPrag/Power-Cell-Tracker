@@ -36,6 +36,7 @@ const standardDeviation = (
     getDistance(p, referencePoint)
   );
 
+  // TODO: This is not an average but a sum!;
   const averageDistance: number = distances.reduce(
     (acc: number, curr: number): number => acc + curr,
     0
