@@ -9,7 +9,7 @@ export interface ArduinoMsg {
   errorCode: number;
 }
 
-const updateRate_MS: number = 20000;
+const updateRate_MS: number = 15000;
 
 ipcMain.on(
   "Start-Arduino-Communication",
@@ -59,7 +59,7 @@ const createWindow = (): void => {
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
   // Open DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   // set full screen
   mainWindow.setFullScreen(true);
