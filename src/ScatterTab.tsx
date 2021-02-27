@@ -71,6 +71,7 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
 
   const clearData = () => {
     props.setData([]);
+    setOpenedBursts(props.data.map((_): false => false));
     console.log("Data Cleared! :)");
   };
 
