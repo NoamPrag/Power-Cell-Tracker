@@ -85,61 +85,34 @@ const Burst = (props: {
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
-                width: "95%",
-                padding: "0 10px",
               }}
             >
-              <Grid container spacing={3}>
-                <Grid item xs={1}>
-                  <GpsFixedIcon />
-                  {/* <ProgressBar value={props.burst.accuracy} show={opened} /> */}
-                </Grid>
-                <Grid item xs={5}>
-                  <Typography>
-                    {Math.round(props.burst.precision * 100) / 100}cm
-                  </Typography>
-                </Grid>
-                <Grid item xs={1}>
-                  <GrainIcon />
-                  {/* <ProgressBar value={props.burst.precision} show={opened} /> */}
-                </Grid>
-                <Grid item xs={5}>
-                  <Typography>
-                    {Math.round(props.burst.precision * 100) / 100}cm
-                  </Typography>
-                </Grid>
-                <Grid item xs={12} alignItems={"center"}>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      width: "95%",
-                      padding: "0 10px",
-                    }}
-                  >
-                    {props.burst.inInnerPort.map(
-                      (inInnerPort: boolean, index: number): JSX.Element => (
-                        <SportsSoccerIcon
-                          key={index}
-                          fontSize="large"
-                          color={inInnerPort ? "secondary" : "primary"}
-                        />
-                      )
-                    )}
-                  </div>
-                </Grid>
-              </Grid>
+              <GpsFixedIcon />
+              <Typography>
+                {Math.round(props.burst.precision * 100) / 100}cm
+              </Typography>
+              <GrainIcon />
+              <Typography>
+                {Math.round(props.burst.precision * 100) / 100}cm
+              </Typography>
             </div>
-            {/* <div
+            <div
               style={{
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
-                width: "95%",
-                padding: "0 10px",
               }}
-            ></div> */}
+            >
+              {props.burst.inInnerPort.map(
+                (inInnerPort: boolean, index: number): JSX.Element => (
+                  <SportsSoccerIcon
+                    key={index}
+                    fontSize="large"
+                    color={inInnerPort ? "secondary" : "primary"}
+                  />
+                )
+              )}
+            </div>
           </div>
         </AccordionDetails>
       </Accordion>
