@@ -39,7 +39,11 @@ const App = (): JSX.Element => {
 
   // update accuracy and precision according to data
   useEffect(() => {
-    if (data.length <= 0) return;
+    if (data.length <= 0) {
+      setTotalAccuracy(0);
+      setTotalPrecision(0);
+      return;
+    }
 
     const allPositions: Position[] = data.reduce(
       (acc: Position[], curr: BurstData): Position[] => [
