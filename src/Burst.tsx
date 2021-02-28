@@ -42,17 +42,18 @@ const Burst = (props: {
   burst: BurstData;
   color: string;
   changeOpen: () => void;
+  animationIn?: boolean;
 }): JSX.Element => {
   const [opened, setOpened] = useState(false);
 
   return (
-    <Slide direction="left" in mountOnEnter unmountOnExit>
+    <Slide direction="left" in={props.animationIn} mountOnEnter unmountOnExit>
       <Container maxWidth="sm" style={{ margin: "10px 0" }}>
         <Accordion>
           <ThemeProvider theme={tabTheme}>
             <AccordionSummary
               expandIcon={<ExpandMore />}
-              onClick={() => {
+              onClick={(): void => {
                 setOpened((current: boolean): boolean => !current);
                 props.changeOpen();
               }}
