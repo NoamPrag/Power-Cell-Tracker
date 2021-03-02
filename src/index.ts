@@ -1,71 +1,74 @@
 import { app, BrowserWindow, ipcMain } from "electron";
-import { BurstData, Position } from "./Burst";
-import { accuracy, precision, inInnerPort } from "./Calculations";
+import { Position } from "./Burst";
+import { dataGenerator } from "./DataGenerator";
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
 export interface ArduinoMsg {
-  burst: BurstData;
-  errorCode: number;
+  readonly coordinates: Position;
+  readonly errorCode: number;
 }
 
-// TODO: make ArduinoTestData interface
+const burstMaxInterval: number = 15000;
+const powerCellMaxInterval: number = 1000;
 
-// Arduino Communications:
+// TODO: Add power cells that pass 3 seconds but don't go beyond 6
+const timeToDeclareBurst: number = 5500;
 
-const SerialPort: any = require("serialport");
-const Readline: any = require("@serialport/parser-readline");
+ipcMain.on(
+  "Start-Arduino-Communication",
+  (event: Electron.IpcMainEvent): void => {
+    const newBurst = () => {
+      setTimeout(() => {
+        console.log("New Burst! :)");
 
-let newBurstCoords: Position[] = [];
+        const numOfPowerCells: number = Math.round(Math.random() * 5);
 
-// TODO: Add serialport types.
-const getArduinoPort = async (): Promise<string> => {
-  const ports: any = await SerialPort.list();
-  const arduinoPort: any = ports.filter((port: any): boolean =>
-    port.manufacturer.includes("Arduino")
-  )[0];
-  return arduinoPort.path;
-};
+        console.log({ numOfPowerCells });
 
-ipcMain.on("Start-Arduino-Communication", (event, arg) => {
-  getArduinoPort()
-    .then((portPath: string) => {
-      const port: any = new SerialPort(portPath, {
-        baudRate: 115200,
-      });
+        for (let i = 0; i < numOfPowerCells; i++) {
+          setTimeout(() => {
+            const powerCellPosition = dataGenerator(1)[0].burstCoordinates[0];
+            const errorCode: number = 0;
+            const msg: ArduinoMsg = {
+              coordinates: powerCellPosition,
+              errorCode,
+            };
+            event.reply("Arduino-Data", msg);
 
-      const parser: any = new Readline();
-      port.pipe(parser);
-
-      parser.on("data", (data: any) => {
-        const [x, y] = data.split(",").slice(0, 3).map(parseFloat);
-        const newPosition: Position = { x, y };
-
-        newBurstCoords.push(newPosition);
-
-        console.log({ x, y });
-
-        if (newBurstCoords.length >= 5) {
-          event.reply("Arduino-Data", {
-            burst: {
-              burstNumber: null,
-              burstCoordinates: newBurstCoords,
-
-              inInnerPort: newBurstCoords.map((position: Position): boolean =>
-                inInnerPort(position)
-              ),
-
-              accuracy: accuracy(newBurstCoords),
-              precision: precision(newBurstCoords),
-            },
-            errorCode: 0,
-          });
-
-          newBurstCoords = [];
+            console.log("New Power Cell! :)");
+          }, i * powerCellMaxInterval);
         }
-      });
-    })
-    .catch(console.log);
-});
+
+        newBurst(); // Infinite loop recursion
+      }, Math.random() * burstMaxInterval + 5000);
+    };
+
+    newBurst(); // Recursion first call
+  }
+);
+
+export interface TimeOutMsg {
+  readonly time: number; // in posix
+  readonly numOfPowerCells: number;
+}
+
+ipcMain.on(
+  "Data-Received",
+  (event: Electron.IpcMainEvent, currNumOfPowerCells: number): void => {
+    const now: number = Date.now();
+    console.log("Data-Received! :)");
+
+    setTimeout((): void => {
+      const reply: TimeOutMsg = {
+        time: now,
+        numOfPowerCells: currNumOfPowerCells,
+      };
+
+      console.log("Time-Out!!");
+      event.reply("Time-Out", reply);
+    }, timeToDeclareBurst);
+  }
+);
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {

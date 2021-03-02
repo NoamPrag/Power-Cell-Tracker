@@ -3,14 +3,14 @@ import ScatterTab from "./ScatterTab";
 import MenuAppBar from "./NavBar";
 import { dataGenerator } from "./DataGenerator";
 import { BurstData, Position } from "./Burst";
-import { accuracy, precision, zeroPosition } from "./calculations";
+import { accuracy, inInnerPort, precision } from "./calculations";
 
 import { Snackbar } from "@material-ui/core";
 
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 
 import { ipcRenderer } from "electron";
-import { ArduinoMsg } from "./index";
+import { ArduinoMsg, TimeOutMsg } from "./index";
 
 export type Tab = "Scatter" | "Arduino" | "Stats";
 
@@ -52,19 +52,47 @@ const App = (): JSX.Element => {
     setTotalPrecision(precision(allPositions));
   }, [data]);
 
+  const [newBurstCoordinates, setNewBurstCoordinates] = useState<Position[]>(
+    []
+  );
+
   // set data on every arduino message
   useEffect((): void => {
-    ipcRenderer.on(
-      "Arduino-Data",
-      (_event: Electron.IpcRendererEvent, message: ArduinoMsg): void => {
-        setData((prevData: BurstData[]): BurstData[] => [
-          ...prevData,
-          { ...message.burst, burstNumber: prevData.length + 1 },
-        ]);
+    ipcRenderer.on("Arduino-Data", (_, message: ArduinoMsg): void => {
+      setNewBurstCoordinates((prevNewBurst: Position[]): Position[] => {
+        ipcRenderer.send("Data-Received", prevNewBurst.length + 1); // +1 because the new one is added right after
 
-        if (message.errorCode !== 0) openAlert(message.errorCode);
-      }
-    );
+        return [...prevNewBurst, message.coordinates];
+      });
+
+      console.log("New Power Cell! :)");
+
+      if (message.errorCode !== 0) openAlert(message.errorCode);
+    });
+
+    ipcRenderer.on("Time-Out", (_, message: TimeOutMsg): void => {
+      setNewBurstCoordinates(
+        (prevNewBurstCoordinates: Position[]): Position[] => {
+          if (message.numOfPowerCells !== prevNewBurstCoordinates.length)
+            return prevNewBurstCoordinates; // Not last power cell in the burst
+
+          setData((prevData) => {
+            const newBurst: BurstData = {
+              burstCoordinates: prevNewBurstCoordinates,
+              burstNumber: prevData.length + 1,
+              inInnerPort: prevNewBurstCoordinates.map(inInnerPort),
+              accuracy: accuracy(prevNewBurstCoordinates),
+              precision: precision(prevNewBurstCoordinates),
+            };
+
+            return [...prevData, newBurst];
+          });
+          console.log("New Burst Added! :)");
+
+          return [];
+        }
+      );
+    });
   }, []);
 
   const [tab, setTab] = useState<Tab>("Scatter");
