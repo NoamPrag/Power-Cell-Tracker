@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Burst, { BurstData } from "./Burst";
+import ArduinoButton from "./ArduinoButton";
+
 import { Grid, Typography, Fab, Button } from "@material-ui/core";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import ProgressBar from "./ProgressBar";
@@ -126,55 +128,100 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
             )}
           </Grid>
 
+          <Grid item container xs={9} alignContent="center">
+            <Grid
+              item
+              container
+              spacing={5}
+              xs={12}
+              alignItems="center"
+              justify="center"
+              // style={{ marginTop: -10 }}
+            >
+              <Grid item xs={1} style={{ marginRight: -20 }}>
+                <Fab
+                  color={showColors ? "secondary" : "default"}
+                  aria-label="edit"
+                  onClick={() => setShowColors((val: boolean): boolean => !val)}
+                >
+                  {showColors ? <InvertColorsIcon /> : <InvertColorsOffIcon />}
+                </Fab>
+              </Grid>
+              <Grid item xs={1}>
+                <ArduinoButton />
+              </Grid>
+
+              <Grid item xs={5}>
+                <Typography variant="h5">
+                  Total Precision:{" "}
+                  {Math.round(props.totalPrecision * 100) / 100}cm
+                </Typography>
+                {/* <ProgressBar value={props.totalPrecision} show={true} /> */}
+              </Grid>
+
+              <Grid item xs={5}>
+                <Typography variant="h5">
+                  Total Accuracy: {Math.round(props.totalAccuracy * 100) / 100}
+                  cm
+                </Typography>
+                {/* <ProgressBar value={props.totalAccuracy} show={true} /> */}
+              </Grid>
+            </Grid>
+          </Grid>
+
           <Grid
             item
             container
+            xs={3}
             spacing={5}
-            xs={12}
             alignItems="center"
-            style={{ marginTop: -10 }}
+            justify="center"
           >
-            <Grid item xs={1} style={{ marginRight: -20 }}>
-              <Fab
-                color={showColors ? "secondary" : "default"}
-                aria-label="edit"
-                onClick={() => setShowColors((val: boolean): boolean => !val)}
+            <Grid
+              item
+              container
+              // spacing={0}
+              xs={12}
+              direction="row"
+              alignContent="center"
+              justify="center"
+              // style={{ minHeight: "100vh" }}
+              // style={{ marginTop: -10 }}
+            >
+              <Grid
+                container
+                item
+                xs={6}
+                alignContent="center"
+                justify="center"
               >
-                {showColors ? <InvertColorsIcon /> : <InvertColorsOffIcon />}
-              </Fab>
-            </Grid>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  startIcon={<ClearAll />}
+                  onClick={clearData}
+                >
+                  Clear
+                </Button>
+              </Grid>
 
-            <Grid item xs={4}>
-              <Typography variant="h5">Total Precision:</Typography>
-              <ProgressBar value={props.totalPrecision} show={true} />
-            </Grid>
-
-            <Grid item xs={4}>
-              <Typography variant="h5">Total Accuracy:</Typography>
-              <ProgressBar value={props.totalAccuracy} show={true} />
-            </Grid>
-
-            <Grid item xs={1} style={{ marginLeft: 70, marginRight: 30 }}>
-              <Button
-                variant="contained"
-                color="primary"
-                size="large"
-                startIcon={<ClearAll />}
-                onClick={clearData}
+              <Grid
+                item
+                xs={6}
+                container
+                alignContent="center"
+                justify="center"
               >
-                Clear
-              </Button>
-            </Grid>
-
-            <Grid item xs={1}>
-              <Button
-                variant="contained"
-                color="primary"
-                size="large"
-                startIcon={<SaveIcon />}
-              >
-                Export
-              </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  startIcon={<SaveIcon />}
+                >
+                  Export
+                </Button>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
