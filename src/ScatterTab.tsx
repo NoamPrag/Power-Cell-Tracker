@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Burst, { BurstData } from "./Burst";
 import ArduinoButton from "./ArduinoButton";
+import CountUp from "react-countup";
 
 import { Grid, Typography, Fab, Button } from "@material-ui/core";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
@@ -161,10 +162,13 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
 
               <Grid item xs={5}>
                 <Typography variant="h5">
-                  Total Accuracy: {Math.round(props.totalAccuracy * 100) / 100}
-                  cm
+                  <CountUp
+                    end={props.totalAccuracy}
+                    decimals={2}
+                    prefix="Total Accuracy: "
+                    suffix="cm"
+                  />
                 </Typography>
-                {/* <ProgressBar value={props.totalAccuracy} show={true} /> */}
               </Grid>
             </Grid>
           </Grid>
