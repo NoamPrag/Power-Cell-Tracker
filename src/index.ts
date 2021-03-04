@@ -8,14 +8,18 @@ export interface ArduinoMsg {
   readonly errorCode: number;
 }
 
-const burstMaxInterval: number = 15000;
-const burstMinInterval: number = 7000;
-
 const powerCellMaxInterval: number = 1000;
 const powerCellMinInterval: number = 200;
 
+const minPowerCellQuantity: number = 3;
+const maxPowerCellQuantity: number = 7;
+
+const burstMinInterval: number =
+  maxPowerCellQuantity * powerCellMaxInterval + 1000;
+const burstMaxInterval: number = 15000;
+
 // TODO: Add power cells that pass 3 seconds but don't go beyond 6
-const timeToDeclareBurst: number = 6000;
+const timeToDeclareBurst: number = burstMinInterval - 2500; // Will be about 3 seconds with real robot
 
 let newBurstCoordinates: Position[] = [];
 
@@ -53,7 +57,10 @@ ipcMain.on(
       setTimeout(() => {
         console.log("New Burst! :)");
 
-        const numOfPowerCells: number = Math.round(Math.random() * 3) + 2; // 2-5 power cells each burst
+        const numOfPowerCells: number =
+          Math.round(
+            Math.random() * (maxPowerCellQuantity - minPowerCellQuantity)
+          ) + minPowerCellQuantity;
 
         console.log({ numOfPowerCells });
 
