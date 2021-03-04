@@ -81,8 +81,14 @@ const Burst = (props: {
               </Grid>
               <Grid item xs={3} justify="center">
                 <Typography>
-                  {"  "}
-                  {Math.round(props.burst.precision * 100) / 100}cm
+                  <CountUp
+                    start={opened ? 0 : props.burst.accuracy}
+                    end={props.burst.accuracy}
+                    decimals={2}
+                    prefix=" "
+                    suffix="cm"
+                    duration={1}
+                  />
                 </Typography>
               </Grid>
               <Grid item xs={1} justify="center"></Grid>
@@ -92,22 +98,28 @@ const Burst = (props: {
               <Grid item xs={3} justify="center">
                 <Typography>
                   <CountUp
+                    start={opened ? 0 : props.burst.precision}
                     end={props.burst.precision}
                     decimals={2}
                     prefix=" "
                     suffix="cm"
-                  ></CountUp>
+                    duration={1}
+                  />
                 </Typography>
               </Grid>
               <Grid container item xs={12} justify="center" direction="row">
                 {props.burst.inInnerPort.map(
                   (inInnerPort: boolean, index: number): JSX.Element => (
                     <Grid item xs={2} justify="center">
-                      <SportsSoccerIcon
-                        key={index}
-                        fontSize="large"
-                        color={inInnerPort ? "secondary" : "primary"}
-                      />
+                      <ThemeProvider
+                        theme={createMuiTheme({ palette: { primary: green } })}
+                      >
+                        <SportsSoccerIcon
+                          key={index}
+                          fontSize="large"
+                          color={inInnerPort ? "primary" : "secondary"}
+                        />
+                      </ThemeProvider>
                     </Grid>
                   )
                 )}
