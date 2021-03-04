@@ -19,13 +19,13 @@ import CountUp from "react-countup";
 export type Position = { x: number; y: number };
 
 export interface BurstData {
-  burstNumber: number;
-  burstCoordinates: Position[];
+  readonly burstNumber: number;
+  readonly burstCoordinates: Position[];
 
-  inInnerPort: boolean[];
+  readonly inInnerPort: boolean[];
 
-  accuracy?: number;
-  precision?: number;
+  readonly accuracy: number;
+  readonly precision: number;
 }
 
 const tabTheme = createMuiTheme({

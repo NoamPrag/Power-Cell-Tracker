@@ -49,10 +49,10 @@ let lastPrecision = 0;
 let lastAccuracy = 0;
 
 interface ScatterTabProps {
-  data: BurstData[];
-  setData: (data: BurstData[] | ((func: BurstData[]) => BurstData[])) => void;
-  totalAccuracy: number;
-  totalPrecision: number;
+  readonly data: BurstData[];
+  readonly setData: (data: BurstData[] | ((func: BurstData[]) => BurstData[])) => void;
+  readonly totalAccuracy: number;
+  readonly totalPrecision: number;
 }
 
 let prevDataLength: number = 0;

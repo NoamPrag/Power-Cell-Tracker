@@ -5,8 +5,8 @@ import { options } from "./ScatterOptions";
 import { BurstData } from "./Burst";
 
 interface ScatterProps {
-  colors: string[];
-  data: BurstData[];
+  readonly colors: string[];
+  readonly data: BurstData[];
 }
 
 const ScatterChart = (props: ScatterProps): JSX.Element => {
