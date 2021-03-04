@@ -49,10 +49,12 @@ const standardDeviation = (
 };
 
 export const accuracy = (coordinates: Position[]): number =>
-  averageDistance(coordinates, zeroPosition);
+  parseFloat(averageDistance(coordinates, zeroPosition).toFixed(2));
 
 export const precision = (coordinates: Position[]): number =>
-  standardDeviation(coordinates, averagePoint(coordinates));
+  parseFloat(
+    standardDeviation(coordinates, averagePoint(coordinates)).toFixed(2)
+  );
 
 const innerPortRadius: number = 17;
 export const inInnerPort = (position: Position): boolean =>
