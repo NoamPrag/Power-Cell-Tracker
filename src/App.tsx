@@ -3,7 +3,7 @@ import { Snackbar } from "@material-ui/core";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 
 import ScatterTab from "./ScatterTab";
-import MenuAppBar from "./NavBar";
+import MenuAppBar, { Tab } from "./NavBar";
 
 import { BurstData } from "./Burst";
 
@@ -12,8 +12,6 @@ import { accuracy, inInnerPort, precision, Position } from "./Analytics";
 
 import { ipcRenderer } from "electron";
 import { ArduinoMsg } from "./index";
-
-export type Tab = "Scatter" | "Arduino" | "Stats";
 
 ipcRenderer.send("Start-Arduino-Communication", null);
 
