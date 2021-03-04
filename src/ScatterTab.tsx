@@ -4,7 +4,11 @@ import ArduinoButton from "./ArduinoButton";
 import CountUp from "react-countup";
 
 import { Grid, Typography, Fab, Button } from "@material-ui/core";
-import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import {
+  MuiThemeProvider,
+  createMuiTheme,
+  Theme,
+} from "@material-ui/core/styles";
 import InvertColorsIcon from "@material-ui/icons/InvertColors";
 import InvertColorsOffIcon from "@material-ui/icons/InvertColorsOff";
 import SaveIcon from "@material-ui/icons/Save";

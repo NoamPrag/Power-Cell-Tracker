@@ -15,8 +15,9 @@ export const options: {} = {
       {
         ticks: {
           beginAtZero: true,
-          suggestedMin: -25,
-          suggestedMax: 25,
+          suggestedMin: -40,
+          suggestedMax: 40,
+          stepSize: 5,
         },
       },
     ],
@@ -71,9 +72,8 @@ export const options: {} = {
         },
         data: any
       ) => {
-        return ` <b> Burst: ${tooltipItem.datasetIndex + 1}   Ball: ${
-          tooltipItem.index + 1
-        }  </b> <br/>
+        return ` <b> Burst: ${tooltipItem.datasetIndex + 1}   Ball: ${tooltipItem.index + 1
+          }  </b> <br/>
         (${tooltipItem.xLabel.toFixed(2)}, ${tooltipItem.yLabel.toFixed(2)})`;
       },
     },
