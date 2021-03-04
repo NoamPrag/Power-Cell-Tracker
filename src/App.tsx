@@ -60,6 +60,8 @@ const App = (): JSX.Element => {
     []
   );
 
+  console.log(newBurstCoordinates);
+
   // set data on every arduino message
   useEffect((): void => {
     ipcRenderer.on("Arduino-Data", (_: never, message: ArduinoMsg): void => {
@@ -67,9 +69,6 @@ const App = (): JSX.Element => {
         ...prevNewBurst,
         message.coordinates,
       ]);
-
-      console.log("New Power Cell! :)");
-
       if (message.errorCode !== 0) openAlert(message.errorCode);
     });
 
@@ -86,7 +85,6 @@ const App = (): JSX.Element => {
             precision: precision(coordinates),
           },
         ]);
-        console.log(`New Burst Added! :) ${newBurstCoordinates}`);
         setNewBurstCoordinates([]);
       }
     );
@@ -101,6 +99,7 @@ const App = (): JSX.Element => {
       {tab === "Scatter" && (
         <ScatterTab
           data={data}
+          newBurst={newBurstCoordinates}
           setData={(
             newData: BurstData[] | ((func: BurstData[]) => BurstData[])
           ): void => setData(newData)}

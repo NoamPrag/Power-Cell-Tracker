@@ -11,6 +11,7 @@ import SaveIcon from "@material-ui/icons/Save";
 import ClearAll from "@material-ui/icons/ClearAll";
 
 import ScatterChart from "./ScatterChart";
+import { Position } from "./Burst";
 
 let burstsColors: string[] = [
   "#2196f3",
@@ -50,9 +51,12 @@ let lastAccuracy = 0;
 
 interface ScatterTabProps {
   readonly data: BurstData[];
-  readonly setData: (data: BurstData[] | ((func: BurstData[]) => BurstData[])) => void;
+  readonly setData: (
+    data: BurstData[] | ((func: BurstData[]) => BurstData[])
+  ) => void;
   readonly totalAccuracy: number;
   readonly totalPrecision: number;
+  readonly newBurst: Position[];
 }
 
 let prevDataLength: number = 0;
@@ -130,6 +134,7 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
           <Grid item xs={9}>
             <ScatterChart
               data={props.data}
+              newBurst={props.newBurst}
               colors={props.data.map(
                 (burst: BurstData, index: number): string =>
                   showColors || openedBursts[index]

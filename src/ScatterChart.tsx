@@ -2,11 +2,12 @@ import React from "react";
 import { Scatter } from "react-chartjs-2";
 import { options } from "./ScatterOptions";
 
-import { BurstData } from "./Burst";
+import { BurstData, Position } from "./Burst";
 
 interface ScatterProps {
   readonly colors: string[];
   readonly data: BurstData[];
+  readonly newBurst: Position[];
 }
 
 const ScatterChart = (props: ScatterProps): JSX.Element => {
