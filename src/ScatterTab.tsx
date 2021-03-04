@@ -48,8 +48,8 @@ const THEME = createMuiTheme({
   },
 });
 
-var lastPrecision = 0;
-var lastAccuracy = 0;
+let lastPrecision = 0;
+let lastAccuracy = 0;
 
 interface ScatterTabProps {
   data: BurstData[];
@@ -197,13 +197,13 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
               <Grid item xs={5}>
                 <Typography variant="h5">
                   <CountUp
+                    start={lastPrecision}
                     end={props.totalPrecision}
                     decimals={2}
                     prefix="Total Precision: "
-                    suffix="cm"
+                    suffix=" cm"
                   />
                 </Typography>
-                {/* <ProgressBar value={props.totalPrecision} show={true} /> */}
               </Grid>
 
               <Grid item xs={5}>
@@ -213,7 +213,7 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
                     end={props.totalAccuracy}
                     decimals={2}
                     prefix="Total Accuracy: "
-                    suffix="cm"
+                    suffix=" cm"
                   />
                 </Typography>
               </Grid>
