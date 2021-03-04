@@ -3,7 +3,7 @@ import ScatterTab from "./ScatterTab";
 import MenuAppBar from "./NavBar";
 import { dataGenerator } from "./DataGenerator";
 import { BurstData, Position } from "./Burst";
-import { accuracy, precision, zeroPosition } from "./calculations";
+import { accuracy, inInnerPort, precision } from "./calculations";
 
 import { Snackbar } from "@material-ui/core";
 
@@ -56,17 +56,38 @@ const App = (): JSX.Element => {
     setTotalPrecision(precision(allPositions));
   }, [data]);
 
+  const [newBurstCoordinates, setNewBurstCoordinates] = useState<Position[]>(
+    []
+  );
+
   // set data on every arduino message
   useEffect((): void => {
+    ipcRenderer.on("Arduino-Data", (_: never, message: ArduinoMsg): void => {
+      setNewBurstCoordinates((prevNewBurst: Position[]): Position[] => [
+        ...prevNewBurst,
+        message.coordinates,
+      ]);
+
+      console.log("New Power Cell! :)");
+
+      if (message.errorCode !== 0) openAlert(message.errorCode);
+    });
+
     ipcRenderer.on(
-      "Arduino-Data",
-      (_event: Electron.IpcRendererEvent, message: ArduinoMsg): void => {
+      "Merge-New-Burst",
+      (_: never, coordinates: Position[]): void => {
         setData((prevData: BurstData[]): BurstData[] => [
           ...prevData,
-          { ...message.burst, burstNumber: prevData.length + 1 },
+          {
+            burstCoordinates: coordinates,
+            burstNumber: prevData.length + 1,
+            inInnerPort: coordinates.map(inInnerPort),
+            accuracy: accuracy(coordinates),
+            precision: precision(coordinates),
+          },
         ]);
-
-        if (message.errorCode !== 0) openAlert(message.errorCode);
+        console.log(`New Burst Added! :) ${newBurstCoordinates}`);
+        setNewBurstCoordinates([]);
       }
     );
   }, []);
