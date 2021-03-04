@@ -94,6 +94,7 @@
     "@types/react-chartjs-2": "^2.5.7",
     "@types/react-dom": "^16.9.8",
     "chart.js": "^2.9.4",
+    "clsx": "^1.1.1",
     "electron-rebuild": "^2.3.5",
     "electron-squirrel-startup": "^1.0.0",
     "react": "^16.14.0",
