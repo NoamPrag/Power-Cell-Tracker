@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AccordionSummary,
   Accordion,
   AccordionDetails,
   Container,
   Typography,
+  Grid,
   Slide,
 } from "@material-ui/core";
 import { ExpandMore } from "@material-ui/icons";
@@ -14,6 +15,8 @@ import GrainIcon from "@material-ui/icons/Grain";
 import ProgressBar from "./ProgressBar";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { green } from "@material-ui/core/colors";
+import CountUp from "react-countup";
+import { useCountUp } from "react-countup";
 
 export type Position = { x: number; y: number };
 
@@ -58,70 +61,55 @@ const Burst = (props: {
                 props.changeOpen();
               }}
             >
-              <Typography
-                variant="h5"
-                style={{ color: props.color, transitionDuration: "0.7s" }}
-              >
-                Burst #{props.burst.burstNumber}
+              Burst #{props.burst.burstNumber}
+            </Typography>
+          </AccordionSummary>
+        </ThemeProvider>
+        <AccordionDetails
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Grid container spacing={1} justify="center">
+            <Grid item xs={1} justify="center">
+              <GpsFixedIcon />
+            </Grid>
+            <Grid item xs={3} justify="center">
+              <Typography>
+                {"  "}
+                {Math.round(props.burst.precision * 100) / 100}cm
               </Typography>
-            </AccordionSummary>
-          </ThemeProvider>
-          <AccordionDetails
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  width: "95%",
-                  padding: "0 10px",
-                }}
-              >
-                <GpsFixedIcon />
-                <ProgressBar value={props.burst.accuracy} show={opened} />
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  width: "95%",
-                  padding: "0 10px",
-                }}
-              >
-                <GrainIcon />
-                <ProgressBar value={props.burst.precision} show={opened} />
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                }}
-              >
-                {props.burst.inInnerPort.map(
-                  (inInnerPort: boolean, index: number): JSX.Element => (
+            </Grid>
+            <Grid item xs={1} justify="center"></Grid>
+            <Grid item xs={1} justify="center">
+              <GrainIcon />
+            </Grid>
+            <Grid item xs={3} justify="center">
+              <Typography>
+                <CountUp
+                  end={props.burst.precision}
+                  decimals={2}
+                  prefix=" "
+                  suffix="cm"
+                ></CountUp>
+              </Typography>
+            </Grid>
+            <Grid container item xs={12} justify="center" direction="row">
+              {props.burst.inInnerPort.map(
+                (inInnerPort: boolean, index: number): JSX.Element => (
+                  <Grid item xs={2} justify="center">
                     <SportsSoccerIcon
                       key={index}
                       fontSize="large"
                       color={inInnerPort ? "secondary" : "primary"}
                     />
-                  )
-                )}
-              </div>
-            </div>
+                  </Grid>
+                )
+              )}
+            </Grid>
+          </Grid>
           </AccordionDetails>
         </Accordion>
       </Container>
