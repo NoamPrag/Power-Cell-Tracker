@@ -1,83 +1,71 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import { Position } from "./Analytics";
-import { dataGenerator } from "./DataGenerator";
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
 export interface ArduinoMsg {
   readonly coordinates: Position;
   readonly errorCode: number;
 }
+// TODO: make ArduinoTestData interface
 
-const powerCellMaxInterval: number = 1000;
-const powerCellMinInterval: number = 200;
+// Arduino Communications:
 
-const minPowerCellQuantity: number = 3;
-const maxPowerCellQuantity: number = 7;
+const SerialPort: any = require("serialport");
+const Readline: any = require("@serialport/parser-readline");
 
-const burstMinInterval: number =
-  maxPowerCellQuantity * powerCellMaxInterval + 1000;
-const burstMaxInterval: number = 15000;
-
-// TODO: Add power cells that pass 3 seconds but don't go beyond 6
-const timeToDeclareBurst: number = burstMinInterval - 2500; // Will be about 3 seconds with real robot
+const timeToDeclareBurst: number = 3000; // burst is done after 3 seconds without new power cells
 
 let newBurstCoordinates: Position[] = [];
 
 let lastPowerCellTime: number = Date.now();
 
-ipcMain.on(
-  "Start-Arduino-Communication",
-  (ipcEvent: Electron.IpcMainEvent): void => {
-    const newPowerCell = (): void => {
-      // Read data from Arduino
-      const coordinates: Position = dataGenerator(1)[0].burstCoordinates[0];
-      const errorCode: number = 0;
+// TODO: Add serialport types.
+const getArduinoPort = async (): Promise<string> => {
+  const ports: any = await SerialPort.list();
+  const arduinoPort: any = ports.filter((port: any): boolean =>
+    port.manufacturer.includes("Arduino")
+  )[0];
+  return arduinoPort.path;
+};
 
-      // Send data to renderer
-      const msg: ArduinoMsg = { coordinates, errorCode };
-      ipcEvent.reply("Arduino-Data", msg);
+ipcMain.on("Start-Arduino-Communication", (ipcEvent: Electron.IpcMainEvent) => {
+  getArduinoPort()
+    .then((portPath: string): void => {
+      const port: any = new SerialPort(portPath, {
+        baudRate: 115200,
+      });
 
-      console.log("New Power Cell! :)");
+      const parser: any = new Readline();
+      port.pipe(parser);
 
-      newBurstCoordinates = [...newBurstCoordinates, coordinates];
+      parser.on("data", (data: any): void => {
+        const [x, y, errorCode]: [number, number, number] = data
+          .split(",")
+          .slice(0, 3)
+          .map(parseFloat);
 
-      lastPowerCellTime = Date.now();
+        const coordinates: Position = { x, y };
 
-      setTimeout((): void => {
-        // Checking if there has been another power cell
-        if (lastPowerCellTime <= Date.now() - timeToDeclareBurst) {
-          ipcEvent.reply("Merge-New-Burst", [...newBurstCoordinates]); // Sending the new burst's coordinates
-          console.log("Merge New Burst! :)");
-          newBurstCoordinates = []; // Resetting the new burst array
-        }
-      }, timeToDeclareBurst);
-    };
+        newBurstCoordinates = [...newBurstCoordinates, coordinates];
 
-    const newBurst = () => {
-      setTimeout(() => {
-        console.log("New Burst! :)");
+        // const msg: ArduinoMsg = { coordinates, /*errorCode*/ errorCode: 0 }; // errorCode not implemented yet on arduino
 
-        const numOfPowerCells: number =
-          Math.round(
-            Math.random() * (maxPowerCellQuantity - minPowerCellQuantity)
-          ) + minPowerCellQuantity;
+        lastPowerCellTime = Date.now();
 
-        console.log({ numOfPowerCells });
+        setTimeout((): void => {
+          // Checking if there has been another power cell
+          if (lastPowerCellTime <= Date.now() - timeToDeclareBurst) {
+            ipcEvent.reply("Merge-New-Burst", [...newBurstCoordinates]); // Sending the new burst's coordinates
+            console.log("New Burst! :)");
+            newBurstCoordinates = []; // Resetting the new burst array
+          }
+        }, timeToDeclareBurst);
 
-        for (let i = 0; i < numOfPowerCells; i++)
-          setTimeout(
-            newPowerCell,
-            i * (powerCellMaxInterval - powerCellMinInterval) +
-              powerCellMinInterval
-          );
-
-        newBurst(); // Infinite loop recursion
-      }, Math.random() * (burstMaxInterval - burstMinInterval) + burstMinInterval);
-    };
-
-    newBurst(); // Recursion first call
-  }
-);
+        console.log(`New Power Cell! ${coordinates.x} ${coordinates.y}`);
+      });
+    })
+    .catch(console.log);
+});
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
