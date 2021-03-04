@@ -1,5 +1,5 @@
 import { BurstData, Position } from "./Burst";
-import { accuracy, precision, inInnerPort } from "./Calculations";
+import { accuracy, precision, inInnerPort } from "./Analytics";
 
 const getRandom = (): number => {
   const randomValue: number = Math.random();

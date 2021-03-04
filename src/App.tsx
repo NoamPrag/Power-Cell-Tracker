@@ -3,7 +3,7 @@ import ScatterTab from "./ScatterTab";
 import MenuAppBar from "./NavBar";
 import { dataGenerator } from "./DataGenerator";
 import { BurstData, Position } from "./Burst";
-import { accuracy, inInnerPort, precision } from "./calculations";
+import { accuracy, inInnerPort, precision } from "./Analytics";
 
 import { Snackbar } from "@material-ui/core";
 
