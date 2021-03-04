@@ -1,5 +1,5 @@
 import { app, BrowserWindow, ipcMain } from "electron";
-import { Position } from "./Burst";
+import { Position } from "./Analytics";
 import { dataGenerator } from "./DataGenerator";
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 

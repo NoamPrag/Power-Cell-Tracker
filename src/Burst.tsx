@@ -16,7 +16,7 @@ import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { green } from "@material-ui/core/colors";
 import CountUp from "react-countup";
 
-export type Position = { x: number; y: number };
+import { Position } from "./Analytics";
 
 export interface BurstData {
   readonly burstNumber: number;

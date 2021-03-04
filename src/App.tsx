@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
+import { Snackbar } from "@material-ui/core";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
+
 import ScatterTab from "./ScatterTab";
 import MenuAppBar from "./NavBar";
+
+import { BurstData } from "./Burst";
+
 import { dataGenerator } from "./DataGenerator";
-import { BurstData, Position } from "./Burst";
-import { accuracy, inInnerPort, precision } from "./Analytics";
-
-import { Snackbar } from "@material-ui/core";
-
-import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
+import { accuracy, inInnerPort, precision, Position } from "./Analytics";
 
 import { ipcRenderer } from "electron";
 import { ArduinoMsg } from "./index";

@@ -2,7 +2,9 @@ import React from "react";
 import { Scatter } from "react-chartjs-2";
 import { options } from "./ScatterOptions";
 
-import { BurstData, Position } from "./Burst";
+import { BurstData } from "./Burst";
+
+import { Position } from "./Analytics";
 
 interface ScatterProps {
   readonly colors: string[];

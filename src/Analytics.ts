@@ -1,4 +1,4 @@
-import { Position } from "./Burst";
+export type Position = { x: number; y: number };
 
 export const zeroPosition: Position = { x: 0, y: 0 };
 

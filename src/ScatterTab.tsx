@@ -11,7 +11,7 @@ import SaveIcon from "@material-ui/icons/Save";
 import ClearAll from "@material-ui/icons/ClearAll";
 
 import ScatterChart from "./ScatterChart";
-import { Position } from "./Burst";
+import { Position } from "./Analytics";
 
 let burstsColors: string[] = [
   "#2196f3",
