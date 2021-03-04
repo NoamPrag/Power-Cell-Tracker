@@ -76,10 +76,10 @@ const Burst = (props: {
             }}
           >
             <Grid container spacing={1} justify="center">
-              <Grid item xs={1} justify="center">
+              <Grid item container xs={1} justify="center">
                 <GpsFixedIcon />
               </Grid>
-              <Grid item xs={3} justify="center">
+              <Grid item container xs={3} justify="center">
                 <Typography>
                   <CountUp
                     start={opened ? 0 : props.burst.accuracy}
@@ -91,11 +91,11 @@ const Burst = (props: {
                   />
                 </Typography>
               </Grid>
-              <Grid item xs={1} justify="center"></Grid>
-              <Grid item xs={1} justify="center">
+              <Grid item xs={1} />
+              <Grid item container xs={1} justify="center">
                 <GrainIcon />
               </Grid>
-              <Grid item xs={3} justify="center">
+              <Grid item container xs={3} justify="center">
                 <Typography>
                   <CountUp
                     start={opened ? 0 : props.burst.precision}
@@ -107,15 +107,14 @@ const Burst = (props: {
                   />
                 </Typography>
               </Grid>
-              <Grid container item xs={12} justify="center" direction="row">
+              <Grid item container xs={12} justify="center" direction="row">
                 {props.burst.inInnerPort.map(
                   (inInnerPort: boolean, index: number): JSX.Element => (
-                    <Grid item xs={2} justify="center">
+                    <Grid item container xs={2} justify="center" key={index}>
                       <ThemeProvider
                         theme={createMuiTheme({ palette: { primary: green } })}
                       >
                         <SportsSoccerIcon
-                          key={index}
                           fontSize="large"
                           color={inInnerPort ? "primary" : "secondary"}
                         />

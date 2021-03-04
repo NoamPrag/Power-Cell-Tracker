@@ -2,18 +2,15 @@ import React, { useState, useEffect } from "react";
 import Burst, { BurstData } from "./Burst";
 import ArduinoButton from "./ArduinoButton";
 import CountUp from "react-countup";
-import { spacing } from "@material-ui/system";
 
 import { Grid, Typography, Fab, Button } from "@material-ui/core";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
-import ProgressBar from "./ProgressBar";
 import InvertColorsIcon from "@material-ui/icons/InvertColors";
 import InvertColorsOffIcon from "@material-ui/icons/InvertColorsOff";
 import SaveIcon from "@material-ui/icons/Save";
 import ClearAll from "@material-ui/icons/ClearAll";
 
 import ScatterChart from "./ScatterChart";
-import { accuracy } from "./Calculations";
 
 let burstsColors: string[] = [
   "#2196f3",
@@ -80,7 +77,7 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
         animations.forEach((_, i: number): void => {
           setTimeout((): void => {
             setAnimations((prevAnimations: boolean[]): boolean[] => {
-              let clone = [...prevAnimations];
+              const clone: boolean[] = [...prevAnimations];
               clone[i] = true;
               return clone;
             });
@@ -146,17 +143,17 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
             {props.data.map(
               (value: BurstData, index: number): JSX.Element => (
                 <Burst
+                  key={index}
                   burst={value}
                   color={
                     showColors || openedBursts[index]
                       ? burstsColors[index % burstsColors.length]
                       : "grey"
                   }
-                  key={index}
                   animationIn={animations[index]}
                   changeOpen={(): void => {
                     setOpenedBursts((prev: boolean[]): boolean[] => {
-                      let clone = [...prev];
+                      const clone: boolean[] = [...prev];
                       clone[index] = !clone[index];
                       return clone;
                     });
@@ -232,13 +229,10 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
             <Grid
               item
               container
-              // spacing={0}
               xs={12}
               direction="row"
               alignContent="center"
               justify="center"
-              // style={{ minHeight: "100vh" }}
-              // style={{ marginTop: -10 }}
             >
               <Grid
                 container
