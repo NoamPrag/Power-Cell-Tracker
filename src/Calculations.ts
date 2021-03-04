@@ -11,7 +11,7 @@ const averagePoint = (coordinates: Position[]): Position => {
       x: acc.x + curr.x,
       y: acc.y + curr.y,
     }),
-    { x: 0, y: 0 }
+    zeroPosition
   );
   return {
     x: sum.x / coordinates.length,
@@ -37,36 +37,23 @@ const standardDeviation = (
     getDistance(p, referencePoint)
   );
 
-  // TODO: This is not an average but a sum!;
-  const averageDistance: number = distances.reduce(
-    (acc: number, curr: number): number => acc + curr,
-    0
-  );
+  const distanceAverage: number = averageDistance(coordinates, zeroPosition);
 
   return Math.sqrt(
     distances.reduce(
       (acc: number, curr: number): number =>
-        acc + Math.pow(averageDistance - curr, 2),
+        acc + Math.pow(distanceAverage - curr, 2),
       0
     ) / coordinates.length
   );
 };
 
-const sigmoid = (l: number, k: number, x0: number, value: number): number =>
-  l / (1 + Math.exp(-k * (value - x0)));
-
 export const accuracy = (coordinates: Position[]): number =>
-  100 * (1 - sigmoid(1, 0.5, 20, averageDistance(coordinates, zeroPosition)));
+  averageDistance(coordinates, zeroPosition);
 
 export const precision = (coordinates: Position[]): number =>
-  100 *
-  (1 -
-    sigmoid(
-      1,
-      0.005,
-      650,
-      standardDeviation(coordinates, averagePoint(coordinates))
-    ));
+  standardDeviation(coordinates, averagePoint(coordinates));
 
+const innerPortRadius: number = 17;
 export const inInnerPort = (position: Position): boolean =>
-  getDistance(position, zeroPosition) < 25;
+  getDistance(position, zeroPosition) < innerPortRadius;
