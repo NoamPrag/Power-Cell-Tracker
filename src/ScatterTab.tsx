@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Burst, { BurstData } from "./Burst";
 import ArduinoButton from "./ArduinoButton";
 import CountUp from "react-countup";
+import { spacing } from "@material-ui/system";
 
 import { Grid, Typography, Fab, Button } from "@material-ui/core";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
@@ -12,6 +13,7 @@ import SaveIcon from "@material-ui/icons/Save";
 import ClearAll from "@material-ui/icons/ClearAll";
 
 import ScatterChart from "./ScatterChart";
+import { accuracy } from "./Calculations";
 
 let burstsColors: string[] = [
   "#2196f3",
@@ -45,6 +47,9 @@ const THEME = createMuiTheme({
     fontFamily: `"Poppins", sans-serif`,
   },
 });
+
+var lastPrecision = 0;
+var lastAccuracy = 0;
 
 const useForceUpdate = (): (() => void) => {
   const [value, setValue] = useState(0);
@@ -129,7 +134,13 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
             )}
           </Grid>
 
-          <Grid item container xs={9} alignContent="center">
+          <Grid
+            item
+            container
+            xs={9}
+            alignContent="center"
+            style={{ marginTop: -20 }}
+          >
             <Grid
               item
               container
@@ -137,7 +148,6 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
               xs={12}
               alignItems="center"
               justify="center"
-              // style={{ marginTop: -10 }}
             >
               <Grid item xs={1} style={{ marginRight: -20 }}>
                 <Fab
@@ -154,8 +164,12 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
 
               <Grid item xs={5}>
                 <Typography variant="h5">
-                  Total Precision:{" "}
-                  {Math.round(props.totalPrecision * 100) / 100}cm
+                  <CountUp
+                    end={props.totalPrecision}
+                    decimals={2}
+                    prefix="Total Precision: "
+                    suffix="cm"
+                  />
                 </Typography>
                 {/* <ProgressBar value={props.totalPrecision} show={true} /> */}
               </Grid>
@@ -163,6 +177,7 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
               <Grid item xs={5}>
                 <Typography variant="h5">
                   <CountUp
+                    start={lastAccuracy}
                     end={props.totalAccuracy}
                     decimals={2}
                     prefix="Total Accuracy: "
@@ -180,6 +195,7 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
             spacing={5}
             alignItems="center"
             justify="center"
+            style={{ marginTop: -20 }}
           >
             <Grid
               item
