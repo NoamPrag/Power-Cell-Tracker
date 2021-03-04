@@ -46,9 +46,6 @@ const THEME = createMuiTheme({
   },
 });
 
-let lastPrecision = 0;
-let lastAccuracy = 0;
-
 interface ScatterTabProps {
   readonly data: BurstData[];
   readonly setData: (
@@ -74,7 +71,7 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
 
   // Called on mount
   useEffect((): void => {
-    burstsColors.sort((): number => Math.random() - 0.5); // Shuffling array
+    burstsColors.sort((): number => Math.random() - 0.5); // Shuffling colors on mount
     setShowColors(true);
     setTimeout(
       () =>
@@ -96,6 +93,9 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
     if (props.data.length > prevDataLength)
       setAnimations(props.data.map((_): true => true));
     prevDataLength = props.data.length;
+
+    if (!props.data.length)
+      burstsColors.sort((): number => Math.random() - 0.5); // Shuffling colors if there is no data
   }, [props.data]);
 
   const clearData = () => {
@@ -173,7 +173,7 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
             container
             xs={9}
             alignContent="center"
-            style={{ marginTop: -20 }}
+            style={{ marginTop: 20 }}
           >
             <Grid
               item
@@ -199,11 +199,12 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
               <Grid item xs={5}>
                 <Typography variant="h5">
                   <CountUp
-                    start={lastPrecision}
-                    end={props.totalPrecision}
+                    start={0}
+                    end={props.totalAccuracy}
                     decimals={2}
-                    prefix="Total Precision: "
+                    prefix="Total Accuracy: "
                     suffix=" cm"
+                    preserveValue
                   />
                 </Typography>
               </Grid>
@@ -211,11 +212,12 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
               <Grid item xs={5}>
                 <Typography variant="h5">
                   <CountUp
-                    start={lastAccuracy}
-                    end={props.totalAccuracy}
+                    start={0}
+                    end={props.totalPrecision}
                     decimals={2}
-                    prefix="Total Accuracy: "
+                    prefix="Total Precision: "
                     suffix=" cm"
+                    preserveValue
                   />
                 </Typography>
               </Grid>
@@ -229,7 +231,7 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
             spacing={5}
             alignItems="center"
             justify="center"
-            style={{ marginTop: -20 }}
+            style={{ marginTop: 0 }}
           >
             <Grid
               item
