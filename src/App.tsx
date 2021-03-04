@@ -10,7 +10,7 @@ import { Snackbar } from "@material-ui/core";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 
 import { ipcRenderer } from "electron";
-import { ArduinoMsg, TimeOutMsg } from "./index";
+import { ArduinoMsg } from "./index";
 
 export type Tab = "Scatter" | "Arduino" | "Stats";
 
@@ -58,41 +58,34 @@ const App = (): JSX.Element => {
 
   // set data on every arduino message
   useEffect((): void => {
-    ipcRenderer.on("Arduino-Data", (_, message: ArduinoMsg): void => {
-      setNewBurstCoordinates((prevNewBurst: Position[]): Position[] => {
-        ipcRenderer.send("Data-Received", prevNewBurst.length + 1); // +1 because the new one is added right after
-
-        return [...prevNewBurst, message.coordinates];
-      });
+    ipcRenderer.on("Arduino-Data", (_: never, message: ArduinoMsg): void => {
+      setNewBurstCoordinates((prevNewBurst: Position[]): Position[] => [
+        ...prevNewBurst,
+        message.coordinates,
+      ]);
 
       console.log("New Power Cell! :)");
 
       if (message.errorCode !== 0) openAlert(message.errorCode);
     });
 
-    ipcRenderer.on("Time-Out", (_, message: TimeOutMsg): void => {
-      setNewBurstCoordinates(
-        (prevNewBurstCoordinates: Position[]): Position[] => {
-          if (message.numOfPowerCells !== prevNewBurstCoordinates.length)
-            return prevNewBurstCoordinates; // Not last power cell in the burst
-
-          setData((prevData) => {
-            const newBurst: BurstData = {
-              burstCoordinates: prevNewBurstCoordinates,
-              burstNumber: prevData.length + 1,
-              inInnerPort: prevNewBurstCoordinates.map(inInnerPort),
-              accuracy: accuracy(prevNewBurstCoordinates),
-              precision: precision(prevNewBurstCoordinates),
-            };
-
-            return [...prevData, newBurst];
-          });
-          console.log("New Burst Added! :)");
-
-          return [];
-        }
-      );
-    });
+    ipcRenderer.on(
+      "Merge-New-Burst",
+      (_: never, coordinates: Position[]): void => {
+        setData((prevData: BurstData[]): BurstData[] => [
+          ...prevData,
+          {
+            burstCoordinates: coordinates,
+            burstNumber: prevData.length + 1,
+            inInnerPort: coordinates.map(inInnerPort),
+            accuracy: accuracy(coordinates),
+            precision: precision(coordinates),
+          },
+        ]);
+        console.log(`New Burst Added! :) ${newBurstCoordinates}`);
+        setNewBurstCoordinates([]);
+      }
+    );
   }, []);
 
   const [tab, setTab] = useState<Tab>("Scatter");

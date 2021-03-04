@@ -9,64 +9,66 @@ export interface ArduinoMsg {
 }
 
 const burstMaxInterval: number = 15000;
+const burstMinInterval: number = 7000;
+
 const powerCellMaxInterval: number = 1000;
+const powerCellMinInterval: number = 200;
 
 // TODO: Add power cells that pass 3 seconds but don't go beyond 6
-const timeToDeclareBurst: number = 5500;
+const timeToDeclareBurst: number = 6000;
+
+let newBurstCoordinates: Position[] = [];
+
+let lastPowerCellTime: number = Date.now();
 
 ipcMain.on(
   "Start-Arduino-Communication",
-  (event: Electron.IpcMainEvent): void => {
+  (ipcEvent: Electron.IpcMainEvent): void => {
+    const newPowerCell = (): void => {
+      // Read data from Arduino
+      const coordinates: Position = dataGenerator(1)[0].burstCoordinates[0];
+      const errorCode: number = 0;
+
+      // Send data to renderer
+      const msg: ArduinoMsg = { coordinates, errorCode };
+      ipcEvent.reply("Arduino-Data", msg);
+
+      console.log("New Power Cell! :)");
+
+      newBurstCoordinates = [...newBurstCoordinates, coordinates];
+
+      lastPowerCellTime = Date.now();
+
+      setTimeout((): void => {
+        // Checking if there has been another power cell
+        if (lastPowerCellTime <= Date.now() - timeToDeclareBurst) {
+          ipcEvent.reply("Merge-New-Burst", [...newBurstCoordinates]); // Sending the new burst's coordinates
+          console.log("Merge New Burst! :)");
+          newBurstCoordinates = []; // Resetting the new burst array
+        }
+      }, timeToDeclareBurst);
+    };
+
     const newBurst = () => {
       setTimeout(() => {
         console.log("New Burst! :)");
 
-        const numOfPowerCells: number = Math.round(Math.random() * 5);
+        const numOfPowerCells: number = Math.round(Math.random() * 3) + 2; // 2-5 power cells each burst
 
         console.log({ numOfPowerCells });
 
-        for (let i = 0; i < numOfPowerCells; i++) {
-          setTimeout(() => {
-            const powerCellPosition = dataGenerator(1)[0].burstCoordinates[0];
-            const errorCode: number = 0;
-            const msg: ArduinoMsg = {
-              coordinates: powerCellPosition,
-              errorCode,
-            };
-            event.reply("Arduino-Data", msg);
-
-            console.log("New Power Cell! :)");
-          }, i * powerCellMaxInterval);
-        }
+        for (let i = 0; i < numOfPowerCells; i++)
+          setTimeout(
+            newPowerCell,
+            i * (powerCellMaxInterval - powerCellMinInterval) +
+              powerCellMinInterval
+          );
 
         newBurst(); // Infinite loop recursion
-      }, Math.random() * burstMaxInterval + 5000);
+      }, Math.random() * (burstMaxInterval - burstMinInterval) + burstMinInterval);
     };
 
     newBurst(); // Recursion first call
-  }
-);
-
-export interface TimeOutMsg {
-  readonly time: number; // in posix
-  readonly numOfPowerCells: number;
-}
-
-ipcMain.on(
-  "Data-Received",
-  (event: Electron.IpcMainEvent, currNumOfPowerCells: number): void => {
-    const now: number = Date.now();
-    console.log("Data-Received! :)");
-
-    setTimeout((): void => {
-      const reply: TimeOutMsg = {
-        time: now,
-        numOfPowerCells: currNumOfPowerCells,
-      };
-
-      console.log("Time-Out!!");
-      event.reply("Time-Out", reply);
-    }, timeToDeclareBurst);
   }
 );
 
