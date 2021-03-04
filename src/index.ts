@@ -1,41 +1,74 @@
 import { app, BrowserWindow, ipcMain } from "electron";
+import { Position } from "./Burst";
 import { dataGenerator } from "./DataGenerator";
-import { BurstData, Position } from "./Burst";
-import { accuracy, precision, inInnerPort } from "./Calculations";
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
 export interface ArduinoMsg {
-  burst: BurstData;
-  errorCode: number;
+  readonly coordinates: Position;
+  readonly errorCode: number;
 }
 
-const updateRate_MS: number = 20000;
+const burstMaxInterval: number = 15000;
+const burstMinInterval: number = 7000;
+
+const powerCellMaxInterval: number = 1000;
+const powerCellMinInterval: number = 200;
+
+// TODO: Add power cells that pass 3 seconds but don't go beyond 6
+const timeToDeclareBurst: number = 6000;
+
+let newBurstCoordinates: Position[] = [];
+
+let lastPowerCellTime: number = Date.now();
 
 ipcMain.on(
   "Start-Arduino-Communication",
-  (event: Electron.IpcMainEvent): void => {
-    setInterval((): void => {
-      const coordinates: Position[] = dataGenerator(1)[0].burstCoordinates;
+  (ipcEvent: Electron.IpcMainEvent): void => {
+    const newPowerCell = (): void => {
+      // Read data from Arduino
+      const coordinates: Position = dataGenerator(1)[0].burstCoordinates[0];
+      const errorCode: number = 0;
 
-      const newBurst: BurstData = {
-        burstNumber: null,
-        burstCoordinates: coordinates,
+      // Send data to renderer
+      const msg: ArduinoMsg = { coordinates, errorCode };
+      ipcEvent.reply("Arduino-Data", msg);
 
-        inInnerPort: coordinates.map((position: Position): boolean =>
-          inInnerPort(position)
-        ),
+      console.log("New Power Cell! :)");
 
-        accuracy: accuracy(coordinates),
-        precision: precision(coordinates),
-      };
+      newBurstCoordinates = [...newBurstCoordinates, coordinates];
 
-      const reply: ArduinoMsg = {
-        burst: newBurst,
-        errorCode: parseInt((Math.random() * 39 + 1).toFixed(0)), // whole number in range 0-40
-      };
+      lastPowerCellTime = Date.now();
 
-      event.reply("Arduino-Data", reply);
-    }, updateRate_MS);
+      setTimeout((): void => {
+        // Checking if there has been another power cell
+        if (lastPowerCellTime <= Date.now() - timeToDeclareBurst) {
+          ipcEvent.reply("Merge-New-Burst", [...newBurstCoordinates]); // Sending the new burst's coordinates
+          console.log("Merge New Burst! :)");
+          newBurstCoordinates = []; // Resetting the new burst array
+        }
+      }, timeToDeclareBurst);
+    };
+
+    const newBurst = () => {
+      setTimeout(() => {
+        console.log("New Burst! :)");
+
+        const numOfPowerCells: number = Math.round(Math.random() * 3) + 2; // 2-5 power cells each burst
+
+        console.log({ numOfPowerCells });
+
+        for (let i = 0; i < numOfPowerCells; i++)
+          setTimeout(
+            newPowerCell,
+            i * (powerCellMaxInterval - powerCellMinInterval) +
+              powerCellMinInterval
+          );
+
+        newBurst(); // Infinite loop recursion
+      }, Math.random() * (burstMaxInterval - burstMinInterval) + burstMinInterval);
+    };
+
+    newBurst(); // Recursion first call
   }
 );
 
@@ -59,7 +92,7 @@ const createWindow = (): void => {
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
   // Open DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   // set full screen
   mainWindow.setFullScreen(true);

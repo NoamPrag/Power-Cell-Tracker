@@ -6,13 +6,13 @@ import {
   Container,
   Typography,
   Grid,
+  Slide,
 } from "@material-ui/core";
 import { ExpandMore } from "@material-ui/icons";
 import SportsSoccerIcon from "@material-ui/icons/SportsSoccer";
 import GpsFixedIcon from "@material-ui/icons/GpsFixed";
 import GrainIcon from "@material-ui/icons/Grain";
 import ProgressBar from "./ProgressBar";
-import { getDistance, zeroPosition } from "./Calculations";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { green } from "@material-ui/core/colors";
 import CountUp from "react-countup";
@@ -44,24 +44,22 @@ const tabTheme = createMuiTheme({
 const Burst = (props: {
   burst: BurstData;
   color: string;
-  changeOpen?: () => void;
+  changeOpen: () => void;
+  animationIn?: boolean;
 }): JSX.Element => {
   const [opened, setOpened] = useState(false);
 
   return (
-    <Container maxWidth="sm" style={{ margin: "10px 0" }}>
-      <Accordion>
-        <ThemeProvider theme={tabTheme}>
-          <AccordionSummary
-            expandIcon={<ExpandMore />}
-            onClick={() => {
-              setOpened((current: boolean): boolean => !current);
-              props.changeOpen();
-            }}
-          >
-            <Typography
-              variant="h5"
-              style={{ color: props.color, transitionDuration: "0.7s" }}
+    <Slide direction="left" in={props.animationIn} mountOnEnter unmountOnExit>
+      <Container maxWidth="sm" style={{ margin: "10px 0" }}>
+        <Accordion>
+          <ThemeProvider theme={tabTheme}>
+            <AccordionSummary
+              expandIcon={<ExpandMore />}
+              onClick={(): void => {
+                setOpened((current: boolean): boolean => !current);
+                props.changeOpen();
+              }}
             >
               Burst #{props.burst.burstNumber}
             </Typography>
@@ -112,9 +110,10 @@ const Burst = (props: {
               )}
             </Grid>
           </Grid>
-        </AccordionDetails>
-      </Accordion>
-    </Container>
+          </AccordionDetails>
+        </Accordion>
+      </Container>
+    </Slide>
   );
 };
 

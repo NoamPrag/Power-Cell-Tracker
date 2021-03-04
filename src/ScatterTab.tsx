@@ -51,17 +51,14 @@ const THEME = createMuiTheme({
 var lastPrecision = 0;
 var lastAccuracy = 0;
 
-const useForceUpdate = (): (() => void) => {
-  const [value, setValue] = useState(0);
-  return (): void => setValue(value + 1);
-};
-
 interface ScatterTabProps {
   data: BurstData[];
   setData: (data: BurstData[] | ((func: BurstData[]) => BurstData[])) => void;
   totalAccuracy: number;
   totalPrecision: number;
 }
+
+let prevDataLength: number = 0;
 
 const ScatterTab = (props: ScatterTabProps): JSX.Element => {
   const [showColors, setShowColors] = useState(false); // set to true on component render
@@ -70,16 +67,53 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
     props.data.map((_): false => false)
   );
 
+  const [animations, setAnimations] = useState<boolean[]>(
+    props.data.map((_): false => false)
+  );
+
+  // Called on mount
   useEffect((): void => {
     burstsColors.sort((): number => Math.random() - 0.5); // Shuffling array
     setShowColors(true);
+    setTimeout(
+      () =>
+        animations.forEach((_, i: number): void => {
+          setTimeout((): void => {
+            setAnimations((prevAnimations: boolean[]): boolean[] => {
+              let clone = [...prevAnimations];
+              clone[i] = true;
+              return clone;
+            });
+          }, i * 100);
+        }),
+      300
+    );
   }, []);
 
-  const forceUpdate: () => void = useForceUpdate();
+  // Called on change of props.data
+  useEffect(() => {
+    if (props.data.length > prevDataLength)
+      setAnimations(props.data.map((_): true => true));
+    prevDataLength = props.data.length;
+  }, [props.data]);
 
   const clearData = () => {
-    props.setData([]);
-    console.log("Data Cleared! :)");
+    animations.forEach((_, i: number): void => {
+      setTimeout((): void => {
+        setAnimations((prevAnimations: boolean[]): boolean[] => {
+          let clone = [...prevAnimations];
+          clone[props.data.length - i - 1] = false; // setting last element to false
+          return clone;
+        });
+        setTimeout(() => {
+          props.setData((prevData) => {
+            let clone = [...prevData];
+            clone.pop();
+            return clone;
+          });
+        }, 150); // Time from animation start until data removal
+      }, i * 100); // Time between each burst
+    });
   };
 
   return (
@@ -119,15 +153,13 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
                       : "grey"
                   }
                   key={index}
+                  animationIn={animations[index]}
                   changeOpen={(): void => {
                     setOpenedBursts((prev: boolean[]): boolean[] => {
-                      prev[index] = !prev[index];
-                      return prev;
+                      let clone = [...prev];
+                      clone[index] = !clone[index];
+                      return clone;
                     });
-
-                    if (!showColors) {
-                      forceUpdate();
-                    }
                   }}
                 />
               )

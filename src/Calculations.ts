@@ -10,7 +10,8 @@ const averagePoint = (coordinates: Position[]): Position => {
     (acc: Position, curr: Position): Position => ({
       x: acc.x + curr.x,
       y: acc.y + curr.y,
-    })
+    }),
+    { x: 0, y: 0 }
   );
   return {
     x: sum.x / coordinates.length,
@@ -36,6 +37,7 @@ const standardDeviation = (
     getDistance(p, referencePoint)
   );
 
+  // TODO: This is not an average but a sum!;
   const averageDistance: number = distances.reduce(
     (acc: number, curr: number): number => acc + curr,
     0
