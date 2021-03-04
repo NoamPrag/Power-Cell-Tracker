@@ -1,10 +1,8 @@
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { green } from "@material-ui/core/colors";
-import Button from "@material-ui/core/Button";
 import Fab from "@material-ui/core/Fab";
 import CheckIcon from "@material-ui/icons/Check";
-import SaveIcon from "@material-ui/icons/Save";
-import React, { useState, useEffect, JSXElementConstructor } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles, createStyles, Theme } from "@material-ui/core";
 import clsx from "clsx";
 import UsbIcon from "@material-ui/icons/Usb";
@@ -45,15 +43,15 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function ArduinoButton(): JSX.Element {
   const classes = useStyles();
-  const [loading, setLoading] = React.useState(false);
-  const [success, setSuccess] = React.useState(false);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const timer = React.useRef<number>();
 
   const buttonClassname = clsx({
     [classes.buttonSuccess]: success,
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       clearTimeout(timer.current);
     };
@@ -71,22 +69,20 @@ export default function ArduinoButton(): JSX.Element {
   };
 
   return (
-    <>
-      <div className={classes.root}>
-        <div className={classes.wrapper}>
-          <Fab
-            aria-label="save"
-            color="primary"
-            className={buttonClassname}
-            onClick={handleButtonClick}
-          >
-            {success ? <CheckIcon /> : <UsbIcon />}
-          </Fab>
-          {loading && (
-            <CircularProgress size={68} className={classes.fabProgress} />
-          )}
-        </div>
+    <div className={classes.root}>
+      <div className={classes.wrapper}>
+        <Fab
+          aria-label="save"
+          color="primary"
+          className={buttonClassname}
+          onClick={handleButtonClick}
+        >
+          {success ? <CheckIcon /> : <UsbIcon />}
+        </Fab>
+        {loading && (
+          <CircularProgress size={68} className={classes.fabProgress} />
+        )}
       </div>
-    </>
+    </div>
   );
 }
