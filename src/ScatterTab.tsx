@@ -2,9 +2,14 @@ import React, { useState, useEffect } from "react";
 import Burst, { BurstData } from "./Burst";
 import ArduinoButton from "./ArduinoButton";
 import CountUp from "react-countup";
+import Confetti from "react-confetti";
 
 import { Grid, Typography, Fab, Button } from "@material-ui/core";
-import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import {
+  MuiThemeProvider,
+  createMuiTheme,
+  Theme,
+} from "@material-ui/core/styles";
 import InvertColorsIcon from "@material-ui/icons/InvertColors";
 import InvertColorsOffIcon from "@material-ui/icons/InvertColorsOff";
 import SaveIcon from "@material-ui/icons/Save";
@@ -120,6 +125,15 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
   return (
     <>
       <MuiThemeProvider theme={THEME}>
+        <Confetti
+          //TODO: change showColors to a 5 inner port power cells event
+          recycle={showColors}
+          // numberOfPieces={showColors ? 500 : 0}
+          run={true}
+          // onConfettiComplete={(confetti) => {
+          //   confetti.reset;
+          // }}
+        />
         <Grid
           container
           style={{
