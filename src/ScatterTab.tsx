@@ -74,6 +74,8 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
     props.data.map((_): false => false)
   );
 
+  const [perfectBurst, setPerfectBurst] = useState<boolean>(false);
+
   // Called on mount
   useEffect((): void => {
     burstsColors.sort((): number => Math.random() - 0.5); // Shuffling colors on mount
@@ -127,12 +129,15 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
       <MuiThemeProvider theme={THEME}>
         <Confetti
           //TODO: change showColors to a 5 inner port power cells event
-          recycle={showColors}
-          // numberOfPieces={showColors ? 500 : 0}
-          run={true}
-          // onConfettiComplete={(confetti) => {
-          //   confetti.reset;
-          // }}
+          recycle={!perfectBurst}
+          // numberOfPieces={perfectBurst ? 200 : 0}
+          run={perfectBurst}
+          onConfettiComplete={(confetti) => {
+            setPerfectBurst(false);
+            confetti.reset;
+            // confetti._options.recycle = true;
+            // confetti.stop;
+          }}
         />
         <Grid
           container
@@ -285,6 +290,9 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
                   color="primary"
                   size="large"
                   startIcon={<SaveIcon />}
+                  onClick={() => {
+                    setPerfectBurst(true);
+                  }}
                 >
                   Export
                 </Button>
