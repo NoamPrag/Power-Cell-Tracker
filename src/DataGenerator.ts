@@ -13,8 +13,8 @@ const normalDistribution = () => {
 };
 
 const randomPosition = (): Position => ({
-  x: normalDistribution() * 11,
-  y: normalDistribution() * 11,
+  x: normalDistribution() * 7,
+  y: normalDistribution() * 7,
 });
 
 const burstGenerator = (burstNumber: number): BurstData => {
