@@ -15,8 +15,9 @@ export const options: {} = {
       {
         ticks: {
           beginAtZero: true,
-          suggestedMin: -25,
-          suggestedMax: 25,
+          suggestedMin: -40,
+          suggestedMax: 40,
+          stepSize: 5,
         },
       },
     ],

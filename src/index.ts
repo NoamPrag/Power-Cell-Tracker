@@ -13,7 +13,7 @@ export interface ArduinoMsg {
 const SerialPort: any = require("serialport");
 const Readline: any = require("@serialport/parser-readline");
 
-const timeToDeclareBurst: number = 3000; // burst is done after 3 seconds without new power cells
+const timeToDeclareBurst: number = 2000; // burst is done after 2 seconds without new power cells
 
 let newBurstCoordinates: Position[] = [];
 
@@ -48,9 +48,11 @@ ipcMain.on("Start-Arduino-Communication", (ipcEvent: Electron.IpcMainEvent) => {
 
         newBurstCoordinates = [...newBurstCoordinates, coordinates];
 
-        // const msg: ArduinoMsg = { coordinates, /*errorCode*/ errorCode: 0 }; // errorCode not implemented yet on arduino
+        const msg: ArduinoMsg = { coordinates, /*errorCode*/ errorCode: 0 }; // errorCode not implemented yet on arduino
 
         lastPowerCellTime = Date.now();
+
+        ipcEvent.reply("Arduino-Data", msg);
 
         setTimeout((): void => {
           // Checking if there has been another power cell
