@@ -3,6 +3,8 @@ import Burst, { BurstData } from "./Burst";
 import ArduinoButton from "./ArduinoButton";
 import CountUp from "react-countup";
 
+import Confetti from "react-confetti";
+
 import { Grid, Typography, Fab, Button } from "@material-ui/core";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import InvertColorsIcon from "@material-ui/icons/InvertColors";
@@ -69,6 +71,8 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
     props.data.map((_): false => false)
   );
 
+  const [showConfetti, setShowConfetti] = useState(false);
+
   // Called on mount
   useEffect((): void => {
     burstsColors.sort((): number => Math.random() - 0.5); // Shuffling colors on mount
@@ -90,12 +94,18 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
 
   // Called on change of props.data
   useEffect(() => {
-    if (props.data.length > prevDataLength)
-      setAnimations(props.data.map((_): true => true));
-    prevDataLength = props.data.length;
-
+    // Shuffling colors if there is no data
     if (!props.data.length)
-      burstsColors.sort((): number => Math.random() - 0.5); // Shuffling colors if there is no data
+      burstsColors.sort((): number => Math.random() - 0.5);
+
+    else if (props.data.length > prevDataLength) {
+      setAnimations(props.data.map((_): true => true));
+
+      const allBurstInInnerPort: boolean = props.data[props.data.length - 1].analyticData.inInnerPort.reduce((acc, curr) => acc && curr);
+      if (allBurstInInnerPort) setShowConfetti(true);
+    }
+
+    prevDataLength = props.data.length;
   }, [props.data]);
 
   const clearData = () => {
@@ -119,6 +129,13 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
 
   return (
     <>
+      {showConfetti && <Confetti
+        width={window.innerWidth}
+        height={window.innerHeight}
+        // run={showConfetti}
+        recycle={false}
+        onConfettiComplete={() => setShowConfetti(false)}
+      />}
       <MuiThemeProvider theme={THEME}>
         <Grid
           container
