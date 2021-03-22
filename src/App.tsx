@@ -20,7 +20,7 @@ const Alert = (props: AlertProps): JSX.Element => (
 );
 
 const App = (): JSX.Element => {
-  const [data, setData] = useState<BurstData[]>(dataGenerator(0));
+  const [data, setData] = useState<BurstData[]>(dataGenerator(6));
 
   const [totalAccuracy, setTotalAccuracy] = useState<number>(0);
   const [totalPrecision, setTotalPrecision] = useState<number>(0);

@@ -15,6 +15,8 @@ import ClearAll from "@material-ui/icons/ClearAll";
 import ScatterChart from "./ScatterChart";
 import { Position } from "./Analytics";
 
+import { requestFileSave } from "./SaveJsonData";
+
 let burstsColors: string[] = [
   "#2196f3",
   "#3568ca",
@@ -97,11 +99,12 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
     // Shuffling colors if there is no data
     if (!props.data.length)
       burstsColors.sort((): number => Math.random() - 0.5);
-
     else if (props.data.length > prevDataLength) {
       setAnimations(props.data.map((_): true => true));
 
-      const allBurstInInnerPort: boolean = props.data[props.data.length - 1].analyticData.inInnerPort.reduce((acc, curr) => acc && curr);
+      const allBurstInInnerPort: boolean = props.data[
+        props.data.length - 1
+      ].analyticData.inInnerPort.reduce((acc, curr) => acc && curr);
       if (allBurstInInnerPort) setShowConfetti(true);
     }
 
@@ -129,13 +132,15 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
 
   return (
     <>
-      {showConfetti && <Confetti
-        width={window.innerWidth}
-        height={window.innerHeight}
-        // run={showConfetti}
-        recycle={false}
-        onConfettiComplete={() => setShowConfetti(false)}
-      />}
+      {showConfetti && (
+        <Confetti
+          width={window.innerWidth}
+          height={window.innerHeight}
+          // run={showConfetti}
+          recycle={false}
+          onConfettiComplete={() => setShowConfetti(false)}
+        />
+      )}
       <MuiThemeProvider theme={THEME}>
         <Grid
           container
@@ -288,6 +293,13 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
                   color="primary"
                   size="large"
                   startIcon={<SaveIcon />}
+                  onClick={() => {
+                    requestFileSave({
+                      bursts: props.data,
+                      totalAccuracy: props.totalAccuracy,
+                      totalPrecision: props.totalPrecision,
+                    });
+                  }}
                 >
                   Export
                 </Button>
