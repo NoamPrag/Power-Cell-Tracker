@@ -60,8 +60,6 @@ const App = (): JSX.Element => {
     []
   );
 
-  console.log(newBurstCoordinates);
-
   // set data on every arduino message
   useEffect((): void => {
     ipcRenderer.on("Arduino-Data", (_: never, message: ArduinoMsg): void => {
