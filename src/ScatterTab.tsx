@@ -136,7 +136,6 @@ const ScatterTab = (props: ScatterTabProps): JSX.Element => {
         <Confetti
           width={window.innerWidth}
           height={window.innerHeight}
-          // run={showConfetti}
           recycle={false}
           onConfettiComplete={() => setShowConfetti(false)}
         />
