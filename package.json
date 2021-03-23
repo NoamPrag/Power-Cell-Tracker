@@ -99,6 +99,7 @@
     "electron-squirrel-startup": "^1.0.0",
     "react": "^16.14.0",
     "react-chartjs-2": "^2.11.1",
+    "react-confetti": "^6.0.1",
     "react-countup": "^4.3.3",
     "react-dom": "^16.14.0",
     "react-visibility-sensor": "^5.1.1",

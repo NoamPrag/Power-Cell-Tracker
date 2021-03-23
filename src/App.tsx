@@ -8,7 +8,7 @@ import MenuAppBar, { Tab } from "./NavBar";
 import { BurstData } from "./Burst";
 
 import { dataGenerator } from "./DataGenerator";
-import { accuracy, inInnerPort, precision, Position } from "./Analytics";
+import { getAnalyticData, Position, accuracyPrecision } from "./Analytics";
 
 import { ipcRenderer } from "electron";
 import { ArduinoMsg } from "./index";
@@ -51,8 +51,10 @@ const App = (): JSX.Element => {
       ],
       []
     );
-    setTotalAccuracy(accuracy(allPositions));
-    setTotalPrecision(precision(allPositions));
+
+    const [accuracy, precision] = accuracyPrecision(allPositions);
+    setTotalAccuracy(accuracy);
+    setTotalPrecision(precision);
   }, [data]);
 
   const [newBurstCoordinates, setNewBurstCoordinates] = useState<Position[]>(
@@ -79,9 +81,7 @@ const App = (): JSX.Element => {
           {
             burstCoordinates: coordinates,
             burstNumber: prevData.length + 1,
-            inInnerPort: coordinates.map(inInnerPort),
-            accuracy: accuracy(coordinates),
-            precision: precision(coordinates),
+            analyticData: getAnalyticData(coordinates),
           },
         ]);
         setNewBurstCoordinates([]);

@@ -16,16 +16,13 @@ import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { green } from "@material-ui/core/colors";
 import CountUp from "react-countup";
 
-import { Position } from "./Analytics";
+import { AnalyticData, Position } from "./Analytics";
 
 export interface BurstData {
   readonly burstNumber: number;
   readonly burstCoordinates: Position[];
 
-  readonly inInnerPort: boolean[];
-
-  readonly accuracy: number;
-  readonly precision: number;
+  readonly analyticData: AnalyticData;
 }
 
 const tabTheme = createMuiTheme({
@@ -82,8 +79,8 @@ const Burst = (props: {
               <Grid item container xs={3} justify="center">
                 <Typography>
                   <CountUp
-                    start={opened ? 0 : props.burst.accuracy}
-                    end={props.burst.accuracy}
+                    start={opened ? 0 : props.burst.analyticData.accuracy}
+                    end={props.burst.analyticData.accuracy}
                     decimals={2}
                     prefix=" "
                     suffix="cm"
@@ -98,8 +95,8 @@ const Burst = (props: {
               <Grid item container xs={3} justify="center">
                 <Typography>
                   <CountUp
-                    start={opened ? 0 : props.burst.precision}
-                    end={props.burst.precision}
+                    start={opened ? 0 : props.burst.analyticData.precision}
+                    end={props.burst.analyticData.precision}
                     decimals={2}
                     prefix=" "
                     suffix="cm"
@@ -108,7 +105,7 @@ const Burst = (props: {
                 </Typography>
               </Grid>
               <Grid item container xs={12} justify="center" direction="row">
-                {props.burst.inInnerPort.map(
+                {props.burst.analyticData.inInnerPort.map(
                   (inInnerPort: boolean, index: number): JSX.Element => (
                     <Grid item container xs={2} justify="center" key={index}>
                       <ThemeProvider
