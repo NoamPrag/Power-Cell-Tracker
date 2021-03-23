@@ -7,7 +7,6 @@ import MenuAppBar, { Tab } from "./NavBar";
 
 import { BurstData } from "./Burst";
 
-import { dataGenerator } from "./DataGenerator";
 import { getAnalyticData, Position, accuracyPrecision } from "./Analytics";
 
 import { ipcRenderer } from "electron";
@@ -20,7 +19,7 @@ const Alert = (props: AlertProps): JSX.Element => (
 );
 
 const App = (): JSX.Element => {
-  const [data, setData] = useState<BurstData[]>(dataGenerator(6));
+  const [data, setData] = useState<BurstData[]>([]);
 
   const [totalAccuracy, setTotalAccuracy] = useState<number>(0);
   const [totalPrecision, setTotalPrecision] = useState<number>(0);
